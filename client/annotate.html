@@ -1,0 +1,87 @@
+<template name="annotationPage">
+    <div class="container">
+        {{#if isLoggedIn}}
+            {{>annotateTask}}
+        {{else}}
+            {{> annotateLogin}}
+        {{/if}}
+    </div>
+</template>
+
+<template name="annotateLogin">
+    Please login or create an account before continuing. Use your MTurkID as your username.
+</template>
+
+<template name="annotateTask">
+    <div class="row instructions">
+        <p>Please read the product description below and help us:</p>
+        <ol>
+            <li>
+                Summarize the <span class="key-purpose">purpose</span> and <span class="key-mechanism">mechanism(s)</span> of the product in the textboxes below.
+            </li>
+            <li>
+                Annotate the description to mark the individual words that best signal the <span class="key-purpose">purpose</span> and/or <span class="key-mechanism">mechanism(s)</span> of the product. Mark a word by clicking on it and selecting the appropriate keyword type (e.g., purpose or mechanism). You may mark as many words as you think will help.
+            </li>
+        </ol>
+        <p>Click on the "I'm finished" button below when you are done.</p>
+    </div>
+    <div class="divider">
+    </div>
+    <div class="row doc-data">
+        <div class="col-md-6 col-xs-6 doc">
+            {{#each sentences}}
+                {{> sentence}}
+            {{/each}}
+        </div>
+        <div class="col-md-6 col-xs-6 summary">
+            <label>What is the unique <span class="key-purpose">purpose</span> of this product?</label>
+            <textarea class="form-control" id="summ-purp" rows="3" placeholder="This product's unique purpose is to..."></textarea>
+            <br/>
+            <label>What is/are the <span class="key-mechanism">mechanism(s)</span> the product uses to achieve its purpose?</label>
+            <textarea class="form-control" id="summ-mech" rows="3" placeholder="This product achieves its unique purpose by..."></textarea>
+            <div class="controls">
+                <!-- take the user to confirmation page -->
+                <button class="finished btn btn-success">I'm finished!</button>
+                <!-- take the user to confirmation page -->
+                <!-- <button class="another btn btn-default">Get me another!</button> -->
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="sentence">
+    <p>
+        {{#each words}}
+            {{> word}}
+        {{/each}}
+    </p>
+</template>
+
+<template name="word">
+    <!-- Single button -->
+    <div class="btn-group token-container">
+      {{#if isPurpose}}
+        <button type="button" class="dropdown-toggle token key-purpose" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{content}} 
+        </button>
+      {{/if}}
+        
+      {{#if isMech}}
+        <button type="button" class="dropdown-toggle token key-mechanism" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{content}} 
+        </button>
+      {{/if}}
+
+      {{#if isNeutral}}
+        <button type="button" class="dropdown-toggle token key-neutral" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{content}} 
+        </button>
+      {{/if}}
+
+      <ul class="dropdown-menu">
+        <li class="key-option purp"><a href="#">Purpose</a></li>
+        <li class="key-option mech"><a href="#">Mechanism</a></li>
+        <li class="key-option"><a href="#">Unmark</a></li>
+      </ul>
+    </div>
+</template>
