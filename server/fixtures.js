@@ -35,12 +35,18 @@ if (Documents.find().count() == 0) {
   //   DocumentManager.createDocument(quirkyDocs[i]);
   // }
   
-  var desiredNum = 5;
-  // var desiredNum = quirkyDocs.length;
-  logger.debug("Documents empty, inserting first " + desiredNum + " docs from Quirky data");
-  var quirkyDocsSubset = quirkyDocs.slice(0,desiredNum);
-  quirkyDocsSubset.forEach(function(doc) {
-    DocumentManager.createDocument(doc);
+  // var desiredNum = 5;
+  // // var desiredNum = quirkyDocs.length;
+  // logger.debug("Documents empty, inserting first " + desiredNum + " docs from Quirky data");
+  // var quirkyDocsSubset = quirkyDocs.slice(0,desiredNum);
+  // quirkyDocsSubset.forEach(function(doc) {
+  //   DocumentManager.createDocument(doc);
+  // });
+
+  quirkyDocs.forEach(function(doc) {
+    if (doc.sample == 1) {
+      DocumentManager.createDocument(doc);
+    }
   });
 
   // index for hopefully faster performance!
