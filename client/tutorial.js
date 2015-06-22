@@ -7,7 +7,7 @@ Logger.setLevel('Client:tutorial', 'trace');
 
 Template.tutorialSentence.helpers({
     sampleWords : function() {
-        var sentence = "Just remove the base to easily switch between straining and serving functions, and save yourself from washing more dirty dishes!"
+        var sentence = "Suntime has advantages over each of these because it records the intensity of sun exposure with the time of day of that exposure, provides a permanent paper record and operates with no batteries or electronics."
         var words = sentence.split(" ");
         var wordObjects = [];
         for (i=0; i < words.length; i++) {
