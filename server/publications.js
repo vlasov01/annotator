@@ -13,3 +13,7 @@ Meteor.publish('sentences', function() {
 Meteor.publish('words', function() {
   return Words.find();
 });
+
+Meteor.publish('myUsers', function() {
+    return MyUsers.find();
+})

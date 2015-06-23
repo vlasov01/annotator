@@ -7,7 +7,7 @@ Logger.setLevel('Client:annotate', 'trace');
 
 Template.annotationPage.helpers({
     isLoggedIn: function() {
-        var user = Meteor.user();
+        var user = Session.get("currentUser");
         if (user) {
             return true;
         } else {
@@ -45,7 +45,7 @@ Template.annotateTask.events({
         }
 
         // check if annotated
-        if (DocumentManager.isAnnotatedBy(Session.get("currentDoc"), Meteor.user())) {
+        if (DocumentManager.isAnnotatedBy(Session.get("currentDoc"), Session.get("currentUser"))) {
             var hasAnnotations = true;
         } else {
             var hasAnnotations = false;
@@ -60,16 +60,17 @@ Template.annotateTask.events({
             alert("Please annotate the document! Remember: we would like at least one purpose keyword and one mechanism keyword.");
         } else {
             // grab the summary data and push to finish
+            var user = Session.get("currentUser");
             DocumentManager.addSummary(Session.get('currentDoc'),
                                         "Purpose",
                                         sumPurpose,
-                                        Meteor.user());
+                                        user);
             DocumentManager.addSummary(Session.get('currentDoc'),
                                         "Mechanism",
                                         sumMechanism,
-                                        Meteor.user());
+                                        user);
             DocumentManager.markAnnotatedBy(Session.get('currentDoc'),
-                                          Meteor.user());
+                                          user);
             Router.go("Finish");            
         }
         // Router.go("Finish");
@@ -86,7 +87,7 @@ Template.sentence.helpers({
 
 Template.word.helpers({
     isPurpose: function() {
-        var userID = Meteor.user()._id;
+        var userID = Session.get("currentUser")._id;
         // logger.debug("Current user is " + userID);
         // logger.trace("Users who have higlighted this as a purpose keyword: " + 
             // JSON.stringify(this.highlightsPurpose));
@@ -98,7 +99,7 @@ Template.word.helpers({
         }
     },
     isMech: function() {
-        var userID = Meteor.user()._id;
+        var userID = Session.get("currentUser")._id;
         // logger.debug("Current user is " + userID);
         // logger.trace("Users who have higlighted this as a mechanism keyword: " + 
             // JSON.stringify(this.highlightsMechanism));
@@ -110,7 +111,7 @@ Template.word.helpers({
         }
     },
     isNeutral: function() {
-        var userID = Meteor.user()._id;
+        var userID = Session.get("currentUser")._id;
         if (!isInList(userID, this.highlightsPurpose) &&
             !isInList(userID, this.highlightsMechanism)) {
             // logger.debug("isNeutral is true");
@@ -129,7 +130,7 @@ Template.word.events({
         var word = selection.parentNode.previousElementSibling;
         // console.log(word);
         var wordID = trimFromString(word.id, "word-");
-        var userID = Meteor.user()._id;
+        var userID = Session.get("currentUser")._id;
         logger.trace(userID + " clicked on " + wordID);
         if (selection.classList.contains("purp")) {
             WordManager.markWord(wordID, userID, "Purpose");

@@ -27,20 +27,24 @@ Template.tutorialSentence.events({
         var word = selection.parentNode.previousElementSibling;
         // console.log(word);
         var wordID = "#" + word.id;
-        userID = Meteor.user()._id;
-        logger.trace(userID + " clicked on " + wordID);
+        var wordText = $(wordID).text().trim();
+        userID = Session.get("currentUser")._id;
+        logger.trace(userID + " clicked on " + wordText + " with id " + wordID);
         if (selection.classList.contains("purp")) {
             $(wordID).addClass('key-purpose');
             $(wordID).removeClass('key-mechanism');
             $(wordID).removeClass('key-neutral');
+            EventLogger.logMarkTutorialWord(wordText, "Purpose");
         } else if (selection.classList.contains("mech")) {
             $(wordID).removeClass('key-purpose');
             $(wordID).addClass('key-mechanism');
             $(wordID).removeClass('key-neutral');
+            EventLogger.logMarkTutorialWord(wordText, "Mechanism");
         } else {
             $(wordID).removeClass('key-purpose');
             $(wordID).removeClass('key-mechanism');
             $(wordID).addClass('key-neutral');
+            EventLogger.logMarkTutorialWord(wordText, "Unmark");
         }
     }
 });
@@ -48,13 +52,17 @@ Template.tutorialSentence.events({
 Template.tutorial.events({
     'click .continue' : function() {
         logger.debug("User clicked continue");
-
-        if (Meteor.user()) {
-            var doc = DocumentManager.sampleDocument(Meteor.user()._id); 
+        EventLogger.logFinishTutorial();
+        var user = Session.get("currentUser");
+        if (user) {
+            var doc = DocumentManager.sampleDocument(user._id); 
             logger.trace("Sending user to annotation task with document " + JSON.stringify(doc));
-            Router.go("Annotate", {docID: doc._id});    
+            Router.go("Annotate", {userID: user._id,
+                                    docID: doc._id});    
         } else {
-            alert("Please log in or create an account before continuing");
+            logger.warn("User is not logged in");
+            alert("You need to have entered your MTurkID to continue");
+            Router.go("Land")
         }   
     }
 });
