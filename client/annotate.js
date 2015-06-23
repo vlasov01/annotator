@@ -61,16 +61,18 @@ Template.annotateTask.events({
         } else {
             // grab the summary data and push to finish
             var user = Session.get("currentUser");
-            DocumentManager.addSummary(Session.get('currentDoc'),
+            var doc = Session.get("currentDoc");
+            DocumentManager.addSummary(doc,
                                         "Purpose",
                                         sumPurpose,
                                         user);
-            DocumentManager.addSummary(Session.get('currentDoc'),
+            DocumentManager.addSummary(doc,
                                         "Mechanism",
                                         sumMechanism,
                                         user);
-            DocumentManager.markAnnotatedBy(Session.get('currentDoc'),
+            DocumentManager.markAnnotatedBy(doc,
                                           user);
+            EventLogger.logFinishDocument(doc._id);
             Router.go("Finish");            
         }
         // Router.go("Finish");
