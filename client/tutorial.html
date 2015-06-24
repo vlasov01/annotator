@@ -3,16 +3,16 @@
         <div class="row instructions">
             <p>We are a building a computer model that can help us understand how products work and how they relate to each other. In particular, we want to understand 2 things about each product:</p>
             <ol>
-                <li><label>Its <span class="key-purpose">purpose</span></label>: What unique problem is the product designed to solve?</li>
-                <li><label>Its <span class="key-mechanism">mechanism(s)</span></label>: What function(s) and/or component(s) of the product allow(s) it to achieve its purpose?</li>
+                <li><label>The unique <span class="key-purpose">problem</span></label> that the product is designed to solve: what could the user not do before with existing products?</li>
+                <li><label>Its <span class="key-mechanism">mechanism(s)</span></label>: What function(s) and/or component(s) of the product allow(s) it to solve that unique problem?</li>
             </ol>
             <p>Your task is to read a product description and do two things:</p>
             <ol>
                 <li>
-                    Summarize the <span class="key-purpose">purpose</span> and <span class="key-mechanism">mechanism(s)</span> of the product.
+                    Summarize the <span class="key-purpose">problem</span> and <span class="key-mechanism">mechanism(s)</span> of the product.
                 </li>
                 <li>
-                    Annotate the description to mark the individual words that best signal the <span class="key-purpose">purpose</span> and/or <span class="key-mechanism">mechanism(s)</span> of the product. Mark a word by clicking on it and selecting the appropriate keyword type (e.g., purpose or mechanism). You may mark as many words as you think will help.
+                    Annotate the description to mark the individual words that best signal the <span class="key-purpose">problem</span> and/or <span class="key-mechanism">mechanism(s)</span> of the product. Mark a word by clicking on it and selecting the appropriate keyword type (e.g., problem or mechanism). You may mark as many words as you think will help.
                 </li>
             </ol>
         </div>
@@ -23,8 +23,8 @@
                 <div class="row tutorial-example">
                     <h4>Example</h4>
                     <p>Here is an example of what we would like you to do.</p>
-                    <p>On the left is a product description, which we have already annotated. Purpose keywords are marked like <span class="key-purpose">this</span> and mechanism keywords are marked like <span class="key-mechanism">this</span>.</p>
-                    <p>On the right are two textboxes for summarizing the product's <span class="key-purpose">purpose</span> and <span class="key-mechanism">mechanism(s)</span>. We have also filled these out here so you can see examples of what we mean by <span class="key-purpose">purpose</span> and <span class="key-mechanism">mechanism(s)</span>.</p>
+                    <p>On the left is a product description, which we have already annotated. Problem keywords are marked like <span class="key-purpose">this</span> and mechanism keywords are marked like <span class="key-mechanism">this</span>.</p>
+                    <p>On the right are two textboxes for summarizing the product's <span class="key-purpose">problem</span> and <span class="key-mechanism">mechanism(s)</span>. We have also filled these out here so you can see examples of what we mean by <span class="key-purpose">problem</span> and <span class="key-mechanism">mechanism(s)</span>.</p>
                 </div>
                 <div class="row">
                     <div class="col-md-6 col-xs-6 doc">
@@ -46,18 +46,18 @@
                         <p>The disc has a centrally located raised socket that fits loosely on the timer shaft engagement collar.</p>
                     </div>
                     <div class="col-md-6 col-xs-6 summary">
-                        <label>What is the unique <span class="key-purpose">purpose</span> of this product?</label>
-                        <textarea class="form-control" id="summ-purp" rows="3" placeholder="This product's unique purpose is to (do something) (to something/someone)...">The unique purpose of this product is to record intensity and time of sun exposure in a permanent way without batteries.</textarea>
+                        <label>What is the unique <span class="key-purpose">problem</span> that this product solves?</label>
+                        <textarea class="form-control" id="summ-purp" rows="3" placeholder="This product solves the main problem of how to...">The product solves the problem of how to record intensity and time of sun exposure in a permanent way without batteries.</textarea>
                         <br/>
-                        <label>What is/are the <span class="key-mechanism">mechanism(s)</span> the product uses to achieve its purpose?</label>
-                        <textarea class="form-control" id="summ-mech" rows="3" placeholder="What are the main parts of the product? What happens to the parts, and how do they support the main purpose?">The photosensitive paper records exposure intensity in a permanent way. The paper is placed on a disc, which sits on a shaft. The shaft rotates the disc as it unwinds in 1-hour increments for 12 hours. The paper also has a printed clock on it that indicates the shaft’s current position in time.</textarea>
+                        <label>What is/are the <span class="key-mechanism">mechanism(s)</span> the product uses to solve its main problem?</label>
+                        <textarea class="form-control" id="summ-mech" rows="5" placeholder="What are the main parts of the product? What happens to the parts, and how do they help to solve the main problem?">The photosensitive paper records exposure intensity in a permanent way. The paper is placed on a disc, which sits on a shaft. The shaft rotates the disc as it unwinds in 1-hour increments for 12 hours. The paper also has a printed clock on it that indicates the shaft’s current position in time.</textarea>
                     </div>
                 </div>
                 <div class="divider">
                 </div>
                 <div class="row tutorial-try">
                     <h4>Annotation interface</h4>
-                    <p>Here is an interactive example of the annotation interface. In the sentence below, you can click on each word to pull up an annotation dropdown menu. Use this menu to mark the word as <span class="key-purpose">purpose</span>, <span class="key-mechanism">mechanism</span>, or to unmark it.</p>
+                    <p>Here is an interactive example of the annotation interface. In the sentence below, you can click on each word to pull up an annotation dropdown menu. Use this menu to mark the word as <span class="key-purpose">problem</span>, <span class="key-mechanism">mechanism</span>, or to unmark it.</p>
                     <div class="doc">
                         {{> tutorialSentence}}
                     </div>
@@ -91,7 +91,7 @@
           {{content}} 
         </button>
         <ul class="dropdown-menu">
-          <li class="key-option purp"><a href="#">Purpose</a></li>
+          <li class="key-option purp"><a href="#">Problem</a></li>
           <li class="key-option mech"><a href="#">Mechanism</a></li>
           <li class="key-option"><a href="#">Unmark</a></li>
         </ul>
