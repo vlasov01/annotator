@@ -59,7 +59,8 @@
 
 <template name="word">
     <!-- Single button -->
-    <div class="btn-group token-container">
+    <button type="button" class="token key-neutral" id="word-{{_id}}">{{content}}</button>
+    <!-- <div class="btn-group token-container">
       {{#if isPurpose}}
         <button type="button" class="dropdown-toggle token key-purpose" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{content}} 
@@ -83,5 +84,5 @@
         <li class="key-option mech"><a href="#">Mechanism</a></li>
         <li class="key-option"><a href="#">Unmark</a></li>
       </ul>
-    </div>
+    </div> -->
 </template>

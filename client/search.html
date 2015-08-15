@@ -1,0 +1,82 @@
+<template name="AnalogySearcher">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-xs-4 seed">
+                {{> SeedDocument}}
+            </div>
+            <div class="col-md-4 col-xs-4 selections">
+                {{> Selections}}
+            </div>
+            <div class="col-md-4 col-xs-4">
+                <div class="row search-bar">
+                    {{> SearchBar}}
+                </div>
+                <div class="row results">
+                    {{> SearchResults}}
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="SeedDocument">
+    <div class="col-md-12 col-xs-12 doc">
+        {{#each sentences}}
+            {{> sentence}}
+        {{/each}}
+    </div>
+</template>
+
+<template name="SearchBar">
+    <div class="col-md-12 col-xs-12">
+        <div class="input-group input-group-sm idea-search">
+          <span class="input-group-btn">
+            <button class="btn btn-default search-apply-btn" type="buttonmargin-left:20%">
+                <i class="glyphicon glyphicon-search"></i>
+            </button>
+          </span>
+          <input type="text" id="search-query" class="form-control" placeholder="Enter keywords to search for matches...">
+          <span class="input-group-btn">
+            <button class="btn btn-default search-remove-btn" type="button">
+                <i class="glyphicon glyphicon-remove"></i>
+            </button>
+          </span>
+        </div> 
+    </div>
+</template>
+
+<template name="Selections">
+    <div class="col-md-12 col-xs-12">
+        <h2>Placeholder for showing selected matches</h2>
+        <!-- {{#each selectedDocs}}
+            {{> Document}}
+        {{/each}} -->
+    </div>
+</template>
+
+<template name="Document">
+    <div class="row">
+        <div class="col-md-10 col-xs-10 doc doc-match">
+            {{#each sentences}}
+                {{> sentence}}
+            {{/each}}
+        </div>
+        <div class="col-md-2 col-xs-2">
+            <button class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
+            <button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+        </div>
+    </div>
+</template>
+
+<template name="SearchResults">
+    <div class="col-md-12 col-xs-12">
+        <h3>{{numMatches}} matching documents</h3>
+        {{#if hasMatches}}
+            {{#each matchingDocs}}
+                {{> Document}}
+            {{/each}}
+        {{else}}
+            <h3>Sorry, no matches!</h3>
+        {{/if}}
+    </div>
+</template>
