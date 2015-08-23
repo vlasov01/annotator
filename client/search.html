@@ -48,22 +48,22 @@
 <template name="Selections">
     <div class="col-md-12 col-xs-12">
         <h2>Placeholder for showing selected matches</h2>
-        <!-- {{#each selectedDocs}}
+        {{#each selectedDocs}}
             {{> Document}}
-        {{/each}} -->
+        {{/each}}
     </div>
 </template>
 
 <template name="Document">
-    <div class="row">
+    <div class="row" id="doc-{{_id}}">
         <div class="col-md-10 col-xs-10 doc doc-match">
             {{#each sentences}}
                 {{> sentence}}
             {{/each}}
         </div>
         <div class="col-md-2 col-xs-2">
-            <button class="btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
-            <button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+            <button id="match-add-{{_id}}" class="btn btn-success match-add"><span class="glyphicon glyphicon-ok"></span></button>
+            <button id="match-remove-{{_id}}" class="btn btn-danger match-remove"><span class="glyphicon glyphicon-remove"></span></button>
         </div>
     </div>
 </template>

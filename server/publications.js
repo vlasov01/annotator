@@ -16,4 +16,8 @@ Meteor.publish('words', function() {
 
 Meteor.publish('myUsers', function() {
     return MyUsers.find();
-})
+});
+
+Meteor.publish('docMatches', function() {
+    return DocMatches.find();
+});

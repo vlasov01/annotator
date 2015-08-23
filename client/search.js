@@ -106,6 +106,18 @@ Template.SearchResults.helpers({
     }
 });
 
+Template.Selections.helpers({
+    selectedDocs: function() {
+        var user = Session.get("currentUser");
+        var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
+        var matchingDocs = []
+        docMatches.forEach(function(m) {
+            matchingDocs.push(m.matchDocID);
+        });
+        return Documents.find({_id: {$in: matchingDocs}});
+    }
+});
+
 Template.Document.rendered = function() {
     $('.doc-match').unhighlight();
     var query = Session.get("searchQuery");
@@ -117,3 +129,15 @@ Template.Document.helpers({
         return Sentences.find({docID: this._id}, {sort: {psn: 1}});
     }
 });
+
+Template.Document.events({
+    'click .match-add': function() {
+        logger.debug("Clicked match button");
+        MatchManager.addMatch(Session.get("currentDoc"), this);
+    },
+    'click .match-remove': function() {
+        logger.debug("Clicked match remove button");
+        logger.trace(this);
+        MatchManager.removeMatch(Session.get("currentDoc"), this);
+    },
+})
