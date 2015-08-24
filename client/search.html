@@ -1,10 +1,10 @@
 <template name="AnalogySearcher">
-    <div class="container">
+    <div class="container search-container">
         <div class="row">
             <div class="col-md-4 col-xs-4 seed">
                 {{> SeedDocument}}
             </div>
-            <div class="col-md-4 col-xs-4 selections">
+            <div class="col-md-4 col-xs-4 selections-container">
                 {{> Selections}}
             </div>
             <div class="col-md-4 col-xs-4">
@@ -20,6 +20,7 @@
 </template>
 
 <template name="SeedDocument">
+    <h3>Seed document</h3>
     <div class="col-md-12 col-xs-12 doc">
         {{#each sentences}}
             {{> sentence}}
@@ -28,7 +29,8 @@
 </template>
 
 <template name="SearchBar">
-    <div class="col-md-12 col-xs-12">
+    <div class="search-bar">
+        <h3>Search for matches</h3>
         <div class="input-group input-group-sm idea-search">
           <span class="input-group-btn">
             <button class="btn btn-default search-apply-btn" type="buttonmargin-left:20%">
@@ -46,8 +48,14 @@
 </template>
 
 <template name="Selections">
-    <div class="col-md-12 col-xs-12">
-        <h2>Placeholder for showing selected matches</h2>
+    <h3>Select a match</h3>
+    <div class="selection-controls">
+          <textarea rows="2" class="form-control" id="matchDescription" placeholder="(Optional) Describe the key problem/mechanism shared by the selected match and seed document"></textarea>
+          <button class="btn btn-default change-seed">Change seed</button>
+          <button class="btn btn-success submit-match">Submit match</button>
+    </div>
+    <div class="selections">
+        <h4>{{numSelections}} selected matches</h4>
         {{#each selectedDocs}}
             {{> Document}}
         {{/each}}
@@ -55,28 +63,33 @@
 </template>
 
 <template name="Document">
-    <div class="row" id="doc-{{_id}}">
+    <div class="doc-container" id="doc-{{_id}}">
         <div class="col-md-10 col-xs-10 doc doc-match">
             {{#each sentences}}
                 {{> sentence}}
             {{/each}}
         </div>
-        <div class="col-md-2 col-xs-2">
-            <button id="match-add-{{_id}}" class="btn btn-success match-add"><span class="glyphicon glyphicon-ok"></span></button>
-            <button id="match-remove-{{_id}}" class="btn btn-danger match-remove"><span class="glyphicon glyphicon-remove"></span></button>
+        <div class="col-md-2 col-xs-2 match-action">
+            {{#if isSelected}}
+                <button id="match-remove-{{_id}}" class="btn btn-danger match-remove"><span class="glyphicon glyphicon-remove"></span></button>
+            {{else}}
+                <button id="match-add-{{_id}}" class="btn btn-success match-add"><span class="glyphicon glyphicon-ok"></span></button>
+            {{/if}}
         </div>
     </div>
 </template>
 
 <template name="SearchResults">
-    <div class="col-md-12 col-xs-12">
-        <h3>{{numMatches}} matching documents</h3>
+    {{#if hasMatches}}
+        <h4>{{numMatches}} potential matches</h4>
+    {{else}}
+        <h4>No matches!</h4>
+    {{/if}}
+    <div class="search-results">
         {{#if hasMatches}}
             {{#each matchingDocs}}
                 {{> Document}}
             {{/each}}
-        {{else}}
-            <h3>Sorry, no matches!</h3>
         {{/if}}
     </div>
 </template>

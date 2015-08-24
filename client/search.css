@@ -1,3 +1,48 @@
 .highlight {
     background-color: #FFFF88;
 }
+
+.search-container .match-action {
+    padding-left: 0px;
+}
+
+.search-container .doc {
+    background-color: white;
+    padding:15px;
+    font-size: 12px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    /*box-shadow: 4px 4px 2px #F8F8F8;*/
+    /*margin-top:1px;*/
+}
+
+.search-container .doc-container {
+    /*background-color: white;*/
+    /*padding:15px;*/
+    font-size: 12px;
+    /*margin-top:1px;*/
+}
+
+.search-container .selection-controls {
+    /*padding-left: 15px;*/
+    padding-right: 17px;
+}
+
+.search-container .submit-match {
+    float:right;
+}
+
+.search-container #matchDescription {
+    font-size: 12px;
+}
+
+.search-container .selections {
+    max-height: 525px;
+    overflow: auto;
+}
+
+.search-container .search-results {
+    max-height: 565px;
+    overflow: auto;
+}

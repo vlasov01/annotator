@@ -41,11 +41,22 @@ Template.SearchBar.events({
 
     // clear full-text search of idea content
     'click .search-remove-btn' : function(){
+        var lastQuery = Session.get("searchQuery");
         Session.set("searchQuery","############################");
         DocSearch.search("############################");
         $('.search-apply-btn').removeClass('btn-success');
         $('#search-query').val("");
         $('.doc-match').unhighlight();
+        var matchData = Session.get("lastMatchSet");
+        logger.trace("Last match set: " + JSON.stringify(matchData));
+        var allMatches = matchData.matches;
+        var ranks = matchData.ranks;
+        allMatches.forEach(function(m) {
+            if (!isSelected(m)) {
+                var thisRank = ranks[m._id];
+                EventLogger.logRejectMatch(lastQuery, m, thisRank);
+            }
+        });
     },
 })
 
@@ -90,14 +101,18 @@ Template.SearchResults.helpers({
 
 Template.Selections.helpers({
     selectedDocs: function() {
-        var user = Session.get("currentUser");
-        var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
-        var matchingDocs = []
-        docMatches.forEach(function(m) {
-            matchingDocs.push(m.matchDocID);
-        });
-        return Documents.find({_id: {$in: matchingDocs}});
-    }
+        return getSelections();
+        // var user = Session.get("currentUser");
+        // var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
+        // var matchingDocs = []
+        // docMatches.forEach(function(m) {
+        //     matchingDocs.push(m.matchDocID);
+        // });
+        // return Documents.find({_id: {$in: matchingDocs}});
+    },
+    numSelections: function() {
+        return getSelections().count();
+    },
 });
 
 Template.Document.rendered = function() {
@@ -109,6 +124,9 @@ Template.Document.rendered = function() {
 Template.Document.helpers({
     sentences: function() {
         return Sentences.find({docID: this._id}, {sort: {psn: 1}});
+    },
+    isSelected: function() {
+        return isSelected(this);
     }
 });
 
@@ -125,10 +143,7 @@ Template.Document.events({
         var query = Session.get("searchQuery");
         EventLogger.logSelectMatch(query, thisDoc, thisRank);
         allMatches.forEach(function(m) {
-            logger.trace("This id: " + thisDoc._id);
-            logger.trace("Current match id: " + m._id);
-            logger.debug("Do they match? " + (m._id == thisDoc._id));
-            if (m._id != thisDoc._id) {
+            if (!m._id != thisDoc._id) {
                 thisRank = ranks[m._id];
                 EventLogger.logRejectMatch(query, m, thisRank);
             }
@@ -153,7 +168,7 @@ var getMatches = function() {
     var ranks = {}
     var rank = 1;
     allMatches.forEach(function(m) {
-        if (m._id != Session.get("currentDoc")._id) {
+        if ((m._id != Session.get("currentDoc")._id) && !isSelected(m)) {
             nonIdentityMatches.push(m);
             ranks[m._id] = rank;
             rank += 1;
@@ -161,4 +176,32 @@ var getMatches = function() {
     });
     var data = {'matches': nonIdentityMatches, 'ranks': ranks}
     return data;
+}
+
+var getSelections = function() {
+    var user = Session.get("currentUser");
+    var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
+    var matchingDocs = []
+    docMatches.forEach(function(m) {
+        matchingDocs.push(m.matchDocID);
+    });
+    return Documents.find({_id: {$in: matchingDocs}});
+}
+
+var isSelected = function(doc) {
+    var user = Session.get("currentUser");
+    var docMatch = DocMatches.findOne({userID: user._id, seedDocID: Session.get("currentDoc")._id, matchDocID: doc._id});
+    if (docMatch) {
+        return true;
+    } else {
+        return false;
+    }
+    // var selected = false;
+    // for (i = 0; i < doc.matchIDs.length; i++) {
+    //     if (doc.matchingDocs[i].userID == user._id) {
+    //         selected = true;
+    //         return selected;
+    //     }
+    // }
+    // return selected;
 }
