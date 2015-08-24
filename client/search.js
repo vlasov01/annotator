@@ -56,10 +56,15 @@ Template.SearchResults.rendered = function () {
 
 Template.SearchResults.helpers({
     matchingDocs: function() {
-        return getMatches();
+        var query = Session.get("searchQuery");
+        var queryMatchData = getMatches();
+        // logger.trace(JSON.stringify(queryMatches));
+        Session.set("lastMatchSet", queryMatchData);
+        EventLogger.logNewSearch(query)
+        return queryMatchData.matches;
     },
     hasMatches: function() {
-        var resultLength = getMatches().length;
+        var resultLength = getMatches().matches.length;
         // resultLength = DocSearch.getData({
         //       transform: function(matchText, regExp) {
         //         return matchText.replace(regExp, "<b>$&</b>")
@@ -73,7 +78,7 @@ Template.SearchResults.helpers({
         }
     },
     numMatches: function() {
-        return getMatches().length;
+        return getMatches().matches.length;
         // return DocSearch.getData({
         //       transform: function(matchText, regExp) {
         //         return matchText.replace(regExp, "<b>$&</b>")
@@ -110,12 +115,30 @@ Template.Document.helpers({
 Template.Document.events({
     'click .match-add': function() {
         logger.debug("Clicked match button");
-        MatchManager.addMatch(Session.get("currentDoc"), this);
+        var thisDoc = this;
+        MatchManager.addMatch(Session.get("currentDoc"), thisDoc);
+        var matchData = Session.get("lastMatchSet");
+        logger.trace("Last match set: " + JSON.stringify(matchData));
+        var allMatches = matchData.matches;
+        var ranks = matchData.ranks;
+        var thisRank = ranks[thisDoc._id];
+        var query = Session.get("searchQuery");
+        EventLogger.logSelectMatch(query, thisDoc, thisRank);
+        allMatches.forEach(function(m) {
+            logger.trace("This id: " + thisDoc._id);
+            logger.trace("Current match id: " + m._id);
+            logger.debug("Do they match? " + (m._id == thisDoc._id));
+            if (m._id != thisDoc._id) {
+                thisRank = ranks[m._id];
+                EventLogger.logRejectMatch(query, m, thisRank);
+            }
+        });
     },
     'click .match-remove': function() {
         logger.debug("Clicked match remove button");
         logger.trace(this);
         MatchManager.removeMatch(Session.get("currentDoc"), this);
+        EventLogger.logRejectPreviousSelection(this);
     },
 })
 
@@ -127,10 +150,15 @@ var getMatches = function() {
           sort: {isoScore: -1}
         });
     var nonIdentityMatches = [];
+    var ranks = {}
+    var rank = 1;
     allMatches.forEach(function(m) {
         if (m._id != Session.get("currentDoc")._id) {
             nonIdentityMatches.push(m);
+            ranks[m._id] = rank;
+            rank += 1;
         }
-    })
-    return nonIdentityMatches;
+    });
+    var data = {'matches': nonIdentityMatches, 'ranks': ranks}
+    return data;
 }

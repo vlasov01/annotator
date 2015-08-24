@@ -21,3 +21,7 @@ Meteor.publish('myUsers', function() {
 Meteor.publish('docMatches', function() {
     return DocMatches.find();
 });
+
+Meteor.publish('events', function() {
+    return Events.find();
+})
