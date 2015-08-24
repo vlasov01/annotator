@@ -51,45 +51,21 @@ Template.SearchBar.events({
 
 Template.SearchResults.rendered = function () {
     DocSearch.search("############################");
+    Session.set("matchingDocs", []);
 };
 
 Template.SearchResults.helpers({
     matchingDocs: function() {
-        return DocSearch.getData({
-              transform: function(matchText, regExp) {
-                return matchText.replace(regExp, "<b>$&</b>")
-              },
-              sort: {isoScore: -1}
-            });
-        // var query = Session.get("searchQuery");
-        // logger.trace("New query created: " + query);
-
-        // // allDocs = Documents.find().fetch();
-        // // logger.debug("Searching through " + allDocs.length + " documents");
-
-        // var queriedDocs = [];
-        // if (query != "") {
-        //     queryArr = stringToWords(query);
-        //     Documents.find().forEach(function(doc){
-        //         if (searchQueryMatch(doc,queryArr)) {
-        //             queriedDocs.push(doc);
-        //         } else {
-        //         }
-        //     });
-            
-        // } 
-        // resultLength = queriedDocs.length;
-        // logger.trace("Found " + resultLength + " matches");
-        // logger.trace("Matching documents: " + JSON.stringify(queriedDocs));
-        // return queriedDocs;
+        return getMatches();
     },
     hasMatches: function() {
-        resultLength = DocSearch.getData({
-              transform: function(matchText, regExp) {
-                return matchText.replace(regExp, "<b>$&</b>")
-              },
-              sort: {isoScore: -1}
-            }).length;
+        var resultLength = getMatches().length;
+        // resultLength = DocSearch.getData({
+        //       transform: function(matchText, regExp) {
+        //         return matchText.replace(regExp, "<b>$&</b>")
+        //       },
+        //       sort: {isoScore: -1}
+        //     }).length;
         if (resultLength < 1) {
             return false;
         } else {
@@ -97,12 +73,13 @@ Template.SearchResults.helpers({
         }
     },
     numMatches: function() {
-        return DocSearch.getData({
-              transform: function(matchText, regExp) {
-                return matchText.replace(regExp, "<b>$&</b>")
-              },
-              sort: {isoScore: -1}
-            }).length;
+        return getMatches().length;
+        // return DocSearch.getData({
+        //       transform: function(matchText, regExp) {
+        //         return matchText.replace(regExp, "<b>$&</b>")
+        //       },
+        //       sort: {isoScore: -1}
+        //     }).length;
     }
 });
 
@@ -141,3 +118,19 @@ Template.Document.events({
         MatchManager.removeMatch(Session.get("currentDoc"), this);
     },
 })
+
+var getMatches = function() {
+    var allMatches = DocSearch.getData({
+          transform: function(matchText, regExp) {
+            return matchText.replace(regExp, "<b>$&</b>")
+          },
+          sort: {isoScore: -1}
+        });
+    var nonIdentityMatches = [];
+    allMatches.forEach(function(m) {
+        if (m._id != Session.get("currentDoc")._id) {
+            nonIdentityMatches.push(m);
+        }
+    })
+    return nonIdentityMatches;
+}
