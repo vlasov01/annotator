@@ -115,6 +115,37 @@ Template.Selections.helpers({
     },
 });
 
+Template.Selections.events({
+    'click .change-seed': function() {
+        var selections = getSelections().fetch();
+        var currentDoc = Session.get("currentDoc");
+        if (selections.length > 0) {
+            alert("Please remove all selected matches first if you want to choose another document to work on");
+        } else {
+            var newDoc = DocumentManager.sampleDocument()
+            // do { 
+            //     var newDoc = DocumentManager.sampleDocument();
+            // }
+            // while (newDoc._id === currentDoc._id);
+            logger.trace("Sampled new document: " + JSON.stringify(newDoc));
+            EventLogger.logNewSeed(currentDoc, newDoc);
+            Session.set("currentDoc", newDoc);
+        }
+    },
+    'click .submit-match': function() {
+        // grab and check summary data
+        var selections = getSelections().fetch();
+        if (selections.length < 1) {
+            alert("You must select one best match; if you don't think there are any good matches, click \"change seed\" to get another document");
+        } else if (selections.length > 1) {
+            alert("You must select only one best match");
+        } else {
+            EventLogger.logMatchSubmission(selections[0])
+            Router.go("Finish");        
+        }
+    }
+});
+
 Template.Document.rendered = function() {
     $('.doc-match').unhighlight();
     var query = Session.get("searchQuery");
