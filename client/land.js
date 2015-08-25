@@ -8,9 +8,18 @@ Logger.setLevel('Client:land', 'trace');
 Template.land.events({
     'click .continue' : function() {
         var userName = $('#userName').val();
-        logger.trace("User " + userName + " clicked continue");
-        userID = UserManager.loginUser(userName);
-        Router.go("Tutorial", {userID: userID});
+        if (userName == "") {
+            logger.warn("User is not logged in");
+            alert("You need to have entered your MTurkID to continue");
+        } else {
+            logger.trace("User " + userName + " clicked continue");
+            userID = UserManager.loginUser(userName);
+            var doc = DocumentManager.sampleDocument(); 
+            logger.trace("Sending user to search task with document " + JSON.stringify(doc));
+            Router.go("Search", {userID: userID,
+                                    docID: doc._id});    
+        }
+        // Router.go("Tutorial", {userID: userID});
         // if (Meteor.user()) {
         //     logger.trace("Sending user to tutorial");
         //     Router.go("Tutorial");    

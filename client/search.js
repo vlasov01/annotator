@@ -136,11 +136,16 @@ Template.Selections.events({
         // grab and check summary data
         var selections = getSelections().fetch();
         if (selections.length < 1) {
-            alert("You must select one best match; if you don't think there are any good matches, click \"change seed\" to get another document");
+            alert("You must select one best match; if you don't think there are any good matches, click \"change document\" to get another target document");
         } else if (selections.length > 1) {
             alert("You must select only one best match");
         } else {
-            EventLogger.logMatchSubmission(selections[0])
+            var user = Session.get("currentUser");
+            var doc = Session.get("currentDoc");
+            var summary = $("#matchDescription").val();
+            EventLogger.logMatchSubmission(selections[0], summary);
+            DocumentManager.markAnnotatedBy(doc, user);
+            EventLogger.logFinishDocument(doc._id);
             Router.go("Finish");        
         }
     }
