@@ -52,7 +52,7 @@ Template.SearchBar.events({
         var allMatches = matchData.matches;
         var ranks = matchData.ranks;
         allMatches.forEach(function(m) {
-            if (!isSelected(m)) {
+            if (!(isPossibleMatch(m) || isBestMatch(m))) {
                 var thisRank = ranks[m._id];
                 EventLogger.logRejectMatch(lastQuery, m, thisRank);
             }
@@ -100,8 +100,11 @@ Template.SearchResults.helpers({
 });
 
 Template.Selections.helpers({
-    selectedDocs: function() {
-        return getSelections();
+    bestMatches: function() {
+        return getBest();
+    },
+    possibleMatches: function() {
+        return getPossible();
         // var user = Session.get("currentUser");
         // var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
         // var matchingDocs = []
@@ -110,8 +113,8 @@ Template.Selections.helpers({
         // });
         // return Documents.find({_id: {$in: matchingDocs}});
     },
-    numSelections: function() {
-        return getSelections().count();
+    numPossible: function() {
+        return getPossible().count();
     },
 });
 
@@ -161,8 +164,11 @@ Template.Document.helpers({
     sentences: function() {
         return Sentences.find({docID: this._id}, {sort: {psn: 1}});
     },
-    isSelected: function() {
-        return isSelected(this);
+    isPossibleMatch: function() {
+        return isPossibleMatch(this);
+    },
+    isBestMatch: function() {
+        return isBestMatch(this);
     }
 });
 
@@ -170,7 +176,7 @@ Template.Document.events({
     'click .match-add': function() {
         logger.debug("Clicked match button");
         var thisDoc = this;
-        MatchManager.addMatch(Session.get("currentDoc"), thisDoc);
+        MatchManager.possibleMatch(Session.get("currentDoc"), thisDoc);
         var matchData = Session.get("lastMatchSet");
         logger.trace("Last match set: " + JSON.stringify(matchData));
         var allMatches = matchData.matches;
@@ -188,9 +194,15 @@ Template.Document.events({
     'click .match-remove': function() {
         logger.debug("Clicked match remove button");
         logger.trace(this);
-        MatchManager.removeMatch(Session.get("currentDoc"), this);
+        MatchManager.notMatch(Session.get("currentDoc"), this);
         EventLogger.logRejectPreviousSelection(this);
     },
+    'click .match-best': function() {
+        logger.debug("Clicked best match button");
+        logger.trace(this);
+        MatchManager.bestMatch(Session.get("currentDoc"), this);
+        // TODO call EventLogger
+    }
 })
 
 var getMatches = function() {
@@ -204,7 +216,7 @@ var getMatches = function() {
     var ranks = {}
     var rank = 1;
     allMatches.forEach(function(m) {
-        if ((m._id != Session.get("currentDoc")._id) && !isSelected(m)) {
+        if ((m._id != Session.get("currentDoc")._id) && !(isPossibleMatch(m) || isBestMatch(m))) {
             nonIdentityMatches.push(m);
             ranks[m._id] = rank;
             rank += 1;
@@ -214,17 +226,31 @@ var getMatches = function() {
     return data;
 }
 
-var getSelections = function() {
+var getPossible = function() {
     var user = Session.get("currentUser");
     var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
     var matchingDocs = []
     docMatches.forEach(function(m) {
-        matchingDocs.push(m.matchDocID);
+        if (!m.bestMatch) {
+            matchingDocs.push(m.matchDocID);
+        }
     });
     return Documents.find({_id: {$in: matchingDocs}});
 }
 
-var isSelected = function(doc) {
+var getBest = function() {
+    var user = Session.get("currentUser");
+    var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
+    var matchingDocs = []
+    docMatches.forEach(function(m) {
+        if (m.bestMatch) {
+            matchingDocs.push(m.matchDocID);
+        }
+    });
+    return Documents.find({_id: {$in: matchingDocs}});
+}
+
+var isPossibleMatch = function(doc) {
     var user = Session.get("currentUser");
     var docMatch = DocMatches.findOne({userID: user._id, seedDocID: Session.get("currentDoc")._id, matchDocID: doc._id});
     if (docMatch) {
@@ -240,4 +266,14 @@ var isSelected = function(doc) {
     //     }
     // }
     // return selected;
+}
+
+var isBestMatch = function(doc) {
+    var user = Session.get("currentUser");
+    var docMatch = DocMatches.findOne({userID: user._id, seedDocID: Session.get("currentDoc")._id, matchDocID: doc._id});
+    if (docMatch) {
+        return docMatch.bestMatch;    
+    } else {
+        return false;
+    }
 }

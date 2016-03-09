@@ -48,34 +48,56 @@
 </template>
 
 <template name="Selections">
-    <h3>Select a match</h3>
+    <h3>Best match</h3>
     <div class="selection-controls">
           <textarea rows="2" class="form-control" id="matchDescription" placeholder="(Optional) Describe the key problem/mechanism shared by the selected match and target document"></textarea>
           <button class="btn btn-default change-seed">Change document</button>
           <button class="btn btn-success submit-match">Submit match</button>
+          <!-- TODO: Display best match(es) here -->
+          {{#each bestMatches}}
+            {{> Document}}
+          {{/each}}
     </div>
+    <h3>{{numPossible}} possible matches</h3>
     <div class="selections">
-        <h4>{{numSelections}} selected matches</h4>
-        {{#each selectedDocs}}
+        
+        {{#each possibleMatches}}
             {{> Document}}
         {{/each}}
+        <!-- TODO: Don't display best match(es) here -->
     </div>
 </template>
 
 <template name="Document">
     <div class="doc-container" id="doc-{{_id}}">
-        <div class="col-md-10 col-xs-10 doc doc-match">
+        <div class="col-md-12 col-xs-12 doc doc-match">
+            <div class="" style="margin-bottom: 5px;">
+                {{#if isBestMatch}}
+                    <button id="match-remove-{{_id}}" class="btn btn-secondary match-remove">Not match</button>
+                    <button id="match-add-{{_id}}" class="btn btn-secondary match-add">Possible match</button>
+                    <button id="match-best-{{_id}}" class="btn btn-primary match-best">Best match</button>
+                {{else}} {{#if isPossibleMatch}}
+                            <button id="match-remove-{{_id}}" class="btn btn-secondary match-remove">Not match</button>
+                            <button id="match-add-{{_id}}" class="btn btn-primary match-add">Possible match</button>
+                            <button id="match-best-{{_id}}" class="btn btn-secondary match-best">Best match</button>
+                         {{else}}
+                            <button id="match-remove-{{_id}}" class="btn btn-primary match-remove">Not match</button>
+                            <button id="match-add-{{_id}}" class="btn btn-secondary match-add">Possible match</button>
+                            <button id="match-best-{{_id}}" class="btn btn-secondary match-best">Best match</button>
+                        {{/if}}
+                {{/if}}
+            </div>
             {{#each sentences}}
                 {{> sentence}}
             {{/each}}
         </div>
-        <div class="col-md-2 col-xs-2 match-action">
+        <!-- <div class="col-md-2 col-xs-2 match-action">
             {{#if isSelected}}
                 <button id="match-remove-{{_id}}" class="btn btn-danger match-remove"><span class="glyphicon glyphicon-remove"></span></button>
             {{else}}
                 <button id="match-add-{{_id}}" class="btn btn-success match-add"><span class="glyphicon glyphicon-ok"></span></button>
             {{/if}}
-        </div>
+        </div> -->
     </div>
 </template>
 
