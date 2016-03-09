@@ -72,20 +72,22 @@
     <div class="doc-container" id="doc-{{_id}}">
         <div class="col-md-12 col-xs-12 doc doc-match">
             <div class="" style="margin-bottom: 5px;">
+                <div class="btn-group" role="group">
                 {{#if isBestMatch}}
-                    <button id="match-remove-{{_id}}" class="btn btn-secondary match-remove">Not match</button>
-                    <button id="match-add-{{_id}}" class="btn btn-secondary match-add">Possible match</button>
-                    <button id="match-best-{{_id}}" class="btn btn-primary match-best">Best match</button>
+                    <button id="match-remove-{{_id}}" class="btn btn-secondary match-remove match-status">Not match</button>
+                    <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status">Possible match</button>
+                    <button id="match-best-{{_id}}" class="btn btn-primary match-best match-status">Best match</button>
                 {{else}} {{#if isPossibleMatch}}
-                            <button id="match-remove-{{_id}}" class="btn btn-secondary match-remove">Not match</button>
-                            <button id="match-add-{{_id}}" class="btn btn-primary match-add">Possible match</button>
-                            <button id="match-best-{{_id}}" class="btn btn-secondary match-best">Best match</button>
+                            <button id="match-remove-{{_id}}" class="btn btn-secondary match-remove match-status">Not match</button>
+                            <button id="match-add-{{_id}}" class="btn btn-primary match-add match-status">Possible match</button>
+                            <button id="match-best-{{_id}}" class="btn btn-secondary match-best match-status">Best match</button>
                          {{else}}
-                            <button id="match-remove-{{_id}}" class="btn btn-primary match-remove">Not match</button>
-                            <button id="match-add-{{_id}}" class="btn btn-secondary match-add">Possible match</button>
-                            <button id="match-best-{{_id}}" class="btn btn-secondary match-best">Best match</button>
+                            <button id="match-remove-{{_id}}" class="btn btn-danger match-remove match-status">Not match</button>
+                            <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status">Possible match</button>
+                            <button id="match-best-{{_id}}" class="btn btn-secondary match-best match-status">Best match</button>
                         {{/if}}
                 {{/if}}
+                </div>
             </div>
             {{#each sentences}}
                 {{> sentence}}

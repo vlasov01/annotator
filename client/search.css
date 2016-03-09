@@ -2,8 +2,9 @@
     background-color: #FFFF88;
 }
 
-.search-container .match-action {
-    padding-left: 0px;
+.search-container .match-status {
+    margin-left: -1px;
+    margin-right: -1px;
 }
 
 .search-container .doc {
@@ -26,7 +27,7 @@
 
 .search-container .selection-controls {
     /*padding-left: 15px;*/
-    padding-right: 17px;
+    /*padding-right: 17px;*/
 }
 
 .search-container .submit-match {
