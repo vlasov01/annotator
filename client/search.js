@@ -21,6 +21,39 @@ Template.SeedDocument.helpers({
     }
 });
 
+Template.SeedDocument.events({
+    'click .change-seed': function() {
+        var confirmMsg = "Are you sure? You will clear all you work so far and move to a new document."
+        // var selections = getSelections().fetch();
+        var currentDoc = Session.get("currentDoc");
+        if (confirm(confirmMsg)) {
+            // TODO: log snapshot of current working space
+            // Clear best match
+            getBest().forEach(function(bMatch) {
+                MatchManager.notMatch(currentDoc, bMatch)
+            })
+            // Clear possible matches
+            getPossible().forEach(function(pMatch) {
+                MatchManager.notMatch(currentDoc, pMatch)
+            })
+            // Clear query
+            $('.search-remove-btn').click();
+            // Get a new doc
+            var newDoc = DocumentManager.sampleDocument()
+            logger.trace("Sampled new document: " + JSON.stringify(newDoc));
+            EventLogger.logNewSeed(currentDoc, newDoc);
+            Session.set("currentDoc", newDoc);
+            //
+        }
+        // var currentDoc = Session.get("currentDoc");
+        // if (selections.length > 0) {
+            // alert("Please remove all selected matches first if you want to choose another document to work on");
+        // } else {
+            // 
+        // }
+    },
+});
+
 Template.SearchBar.events({
     'click .search-apply-btn' : function(){
         var query = $('#search-query').val(); // grab query from text form
@@ -119,22 +152,6 @@ Template.Selections.helpers({
 });
 
 Template.Selections.events({
-    'click .change-seed': function() {
-        var selections = getSelections().fetch();
-        var currentDoc = Session.get("currentDoc");
-        if (selections.length > 0) {
-            alert("Please remove all selected matches first if you want to choose another document to work on");
-        } else {
-            var newDoc = DocumentManager.sampleDocument()
-            // do { 
-            //     var newDoc = DocumentManager.sampleDocument();
-            // }
-            // while (newDoc._id === currentDoc._id);
-            logger.trace("Sampled new document: " + JSON.stringify(newDoc));
-            EventLogger.logNewSeed(currentDoc, newDoc);
-            Session.set("currentDoc", newDoc);
-        }
-    },
     'click .submit-match': function() {
         // grab and check summary data
         var bestMatches = getBest().fetch();
