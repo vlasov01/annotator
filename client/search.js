@@ -137,11 +137,11 @@ Template.Selections.events({
     },
     'click .submit-match': function() {
         // grab and check summary data
-        var selections = getSelections().fetch();
-        if (selections.length < 1) {
+        var bestMatches = getBest().fetch();
+        if (bestMatches.length < 1) {
             alert("You must select one best match; if you don't think there are any good matches, click \"change document\" to get another target document");
-        } else if (selections.length > 1) {
-            alert("You must select only one best match");
+        // } else if (selections.length > 1) {
+        //     alert("You must select only one best match");
         } else {
             var user = Session.get("currentUser");
             var doc = Session.get("currentDoc");
@@ -200,7 +200,18 @@ Template.Document.events({
     'click .match-best': function() {
         logger.debug("Clicked best match button");
         logger.trace(this);
-        MatchManager.bestMatch(Session.get("currentDoc"), this);
+        // selectedDoc = this;
+        if (getBest().fetch().length > 0) {
+            var confirmMsg = "You can only have one best match at any given moment. If you continue, you will replace the current best match and relegate it to a possible match.";
+            if (confirm(confirmMsg)) {
+                // relegate current best match
+                MatchManager.possibleMatch(Session.get("currentDoc"), getBest().fetch()[0]);
+                // create new best
+                MatchManager.bestMatch(Session.get("currentDoc"), this);
+            }
+        } else {
+            MatchManager.bestMatch(Session.get("currentDoc"), this);    
+        }
         // TODO call EventLogger
     }
 })
