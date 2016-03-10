@@ -44,9 +44,10 @@ if (Documents.find().count() == 0) {
   // });
 
   quirkyDocs.forEach(function(doc) {
-    if (doc.sample == 1) {
-      DocumentManager.createDocument(doc);
-    }
+    // if (doc.sample == 1) {
+      // DocumentManager.createDocument(doc);
+    // }
+    DocumentManager.createDocument(doc);
   });
 
   // index for hopefully faster performance!

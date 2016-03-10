@@ -14,11 +14,14 @@ var fields = ['content'];
 DocSearch = new SearchSource('documents', fields, options);
 
 Template.SeedDocument.helpers({
-    sentences: function() {
-        logger.debug("Getting sentences...");
-        return Sentences.find({docID: Session.get("currentDoc")._id},
-                                {sort: {psn: 1}});
+    content: function() {
+        return Documents.findOne({_id: Session.get("currentDoc")._id}).content;
     }
+    // sentences: function() {
+    //     logger.debug("Getting sentences...");
+    //     return Sentences.find({docID: Session.get("currentDoc")._id},
+    //                             {sort: {psn: 1}});
+    // }
 });
 
 Template.SeedDocument.events({
@@ -178,9 +181,9 @@ Template.Document.rendered = function() {
 };
 
 Template.Document.helpers({
-    sentences: function() {
-        return Sentences.find({docID: this._id}, {sort: {psn: 1}});
-    },
+    // sentences: function() {
+    //     return Sentences.find({docID: this._id}, {sort: {psn: 1}});
+    // },
     isPossibleMatch: function() {
         return isPossibleMatch(this);
     },

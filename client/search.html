@@ -23,9 +23,10 @@
     <h3>Target document</h3>
     <button class="btn btn-danger change-seed" style="margin-bottom:10px;">No good matches. Give me a new doc.</button>
     <div class="col-md-12 col-xs-12 doc">
-        {{#each sentences}}
-            {{> sentence}}
-        {{/each}}
+        {{content}}
+        <!-- {{#each sentences}} -->
+            <!-- {{> sentence}} -->
+        <!-- {{/each}} -->
     </div>
 </template>
 
@@ -89,9 +90,10 @@
                 {{/if}}
                 </div>
             </div>
-            {{#each sentences}}
-                {{> sentence}}
-            {{/each}}
+            {{content}}
+            <!-- {{#each sentences}} -->
+                <!-- {{> sentence}} -->
+            <!-- {{/each}} -->
         </div>
         <!-- <div class="col-md-2 col-xs-2 match-action">
             {{#if isSelected}}
