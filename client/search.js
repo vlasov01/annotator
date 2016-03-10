@@ -241,15 +241,21 @@ var getMatches = function() {
           sort: {isoScore: -1}
         });
     var nonIdentityMatches = [];
-    var ranks = {}
-    var rank = 1;
     allMatches.forEach(function(m) {
         if ((m._id != Session.get("currentDoc")._id) && !(isPossibleMatch(m) || isBestMatch(m))) {
             nonIdentityMatches.push(m);
-            ranks[m._id] = rank;
-            rank += 1;
+            
         }
     });
+    // shuffle and note the rank in the search list
+    nonIdentityMatches = shuffle(nonIdentityMatches);
+    var ranks = {}
+    var rank = 1;
+    nonIdentityMatches.forEach(function(match) {
+        ranks[match._id] = rank;
+        rank += 1;
+    })
+
     var data = {'matches': nonIdentityMatches, 'ranks': ranks}
     return data;
 }
