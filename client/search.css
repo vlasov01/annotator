@@ -28,10 +28,13 @@
 .search-container .selection-controls {
     /*padding-left: 15px;*/
     /*padding-right: 17px;*/
+    /*max-height: 525px;*/
+    /*overflow: auto;*/
 }
 
 .search-container .submit-match {
-    float:right;
+    /*float:right;*/
+    margin-bottom: 10px;
 }
 
 .search-container #matchDescription {
@@ -47,3 +50,17 @@
     max-height: 565px;
     overflow: auto;
 }
+
+.search-container .doc-content {
+    max-height: 300px;
+    overflow: auto;
+}
+
+.selections-container {
+    display: block;
+}
+/*.result .doc, .selections-container .doc {
+    max-height: 350px;
+    overflow: auto;
+}
+*/

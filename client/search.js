@@ -46,7 +46,7 @@ Template.SeedDocument.events({
             logger.trace("Sampled new document: " + JSON.stringify(newDoc));
             EventLogger.logNewSeed(currentDoc, newDoc);
             Session.set("currentDoc", newDoc);
-            //
+            // TODO: Log that this user has already seen this doc
         }
         // var currentDoc = Session.get("currentDoc");
         // if (selections.length > 0) {
@@ -158,18 +158,39 @@ Template.Selections.events({
     'click .submit-match': function() {
         // grab and check summary data
         var bestMatches = getBest().fetch();
+        // console.log(bestMatches);
+        // logger.trace("Best matches: " + JSON.stringify(bestMatches));
         if (bestMatches.length < 1) {
             alert("You must select one best match; if you don't think there are any good matches, click \"change document\" to get another target document");
         // } else if (selections.length > 1) {
         //     alert("You must select only one best match");
         } else {
+            var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id, 
+                                              seedDocID: Session.get("currentDoc")._id,
+                                              matchDocID: bestMatches[0]._id,
+                                              bestMatch: true
+                                              });
+            logger.trace("Best match: " + JSON.stringify(bestMatch));
             var user = Session.get("currentUser");
             var doc = Session.get("currentDoc");
             var summary = $("#matchDescription").val();
-            EventLogger.logMatchSubmission(selections[0], summary);
+            
+            // generate completion code
+            var completionCode = Random.hexString(20).toLowerCase();
+
+            // add metadata (completion code and summary) to best match
+            DocMatches.update({_id: bestMatch._id},{$set: {completionCode: completionCode, summary: summary}})
+
+            // log the final submission
+            finalMatch = DocMatches.findOne({_id: bestMatch._id});
+            logger.trace("Best match" + JSON.stringify(finalMatch));
+            EventLogger.logMatchSubmission(finalMatch, summary);
+
+            // remember that this user has already seen this doc
             DocumentManager.markAnnotatedBy(doc, user);
+            
             EventLogger.logFinishDocument(doc._id);
-            Router.go("Finish");        
+            Router.go("Finish", {matchID: finalMatch._id});
         }
     }
 });
