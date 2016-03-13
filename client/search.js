@@ -46,7 +46,7 @@ Template.SeedDocument.events({
             logger.trace("Sampled new document: " + JSON.stringify(newDoc));
             EventLogger.logNewSeed(currentDoc, newDoc);
             Session.set("currentDoc", newDoc);
-            // TODO: Log that this user has already seen this doc
+            // POSSIBLE TODO: Log that this user has already seen this doc???
         }
         // var currentDoc = Session.get("currentDoc");
         // if (selections.length > 0) {
@@ -63,6 +63,10 @@ Template.SearchBar.events({
         Session.set("searchQuery",query);
         DocSearch.search(query);
         $('.search-apply-btn').addClass('btn-success');
+        var queryMatchData = getMatches();
+        // logger.trace(JSON.stringify(queryMatches));
+        // Session.set("lastMatchSet", queryMatchData);
+        // EventLogger.logNewSearch(query)
         // logger.trace("Created new query: " + Session.get("searchQuery"));
     },
 
@@ -78,11 +82,6 @@ Template.SearchBar.events({
     // clear full-text search of idea content
     'click .search-remove-btn' : function(){
         var lastQuery = Session.get("searchQuery");
-        Session.set("searchQuery","############################");
-        DocSearch.search("############################");
-        $('.search-apply-btn').removeClass('btn-success');
-        $('#search-query').val("");
-        $('.doc-match').unhighlight();
         var matchData = Session.get("lastMatchSet");
         logger.trace("Last match set: " + JSON.stringify(matchData));
         var allMatches = matchData.matches;
@@ -90,9 +89,14 @@ Template.SearchBar.events({
         allMatches.forEach(function(m) {
             if (!(isPossibleMatch(m) || isBestMatch(m))) {
                 var thisRank = ranks[m._id];
-                EventLogger.logRejectMatch(lastQuery, m, thisRank);
+                EventLogger.logImplicitReject(lastQuery, m, thisRank);
             }
         });
+        Session.set("searchQuery","############################");
+        DocSearch.search("############################");
+        $('.search-apply-btn').removeClass('btn-success');
+        $('#search-query').val("");
+        $('.doc-match').unhighlight();
     },
 })
 
@@ -218,25 +222,25 @@ Template.Document.events({
         logger.debug("Clicked match button");
         var thisDoc = this;
         MatchManager.possibleMatch(Session.get("currentDoc"), thisDoc);
-        var matchData = Session.get("lastMatchSet");
-        logger.trace("Last match set: " + JSON.stringify(matchData));
-        var allMatches = matchData.matches;
-        var ranks = matchData.ranks;
-        var thisRank = ranks[thisDoc._id];
-        var query = Session.get("searchQuery");
-        EventLogger.logSelectMatch(query, thisDoc, thisRank);
-        allMatches.forEach(function(m) {
-            if (!m._id != thisDoc._id) {
-                thisRank = ranks[m._id];
-                EventLogger.logRejectMatch(query, m, thisRank);
-            }
-        });
+        // var matchData = Session.get("lastMatchSet");
+        // logger.trace("Last match set: " + JSON.stringify(matchData));
+        // var allMatches = matchData.matches;
+        // var ranks = matchData.ranks;
+        // var thisRank = ranks[thisDoc._id];
+        // var query = Session.get("searchQuery");
+        // EventLogger.logSelectMatch(query, thisDoc, thisRank);
+        // allMatches.forEach(function(m) {
+        //     if (!m._id != thisDoc._id) {
+        //         thisRank = ranks[m._id];
+        //         EventLogger.logImplicitReject(m);
+        //     }
+        // });
     },
     'click .match-remove': function() {
         logger.debug("Clicked match remove button");
         logger.trace(this);
         MatchManager.notMatch(Session.get("currentDoc"), this);
-        EventLogger.logRejectPreviousSelection(this);
+        // EventLogger.logRejectPreviousSelection(this);
     },
     'click .match-best': function() {
         logger.debug("Clicked best match button");
@@ -253,7 +257,6 @@ Template.Document.events({
         } else {
             MatchManager.bestMatch(Session.get("currentDoc"), this);    
         }
-        // TODO call EventLogger
     }
 })
 
