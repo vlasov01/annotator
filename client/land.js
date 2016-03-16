@@ -14,10 +14,7 @@ Template.land.events({
         } else {
             logger.trace("User " + userName + " clicked continue");
             userID = UserManager.loginUser(userName);
-            var doc = DocumentManager.sampleDocument(); 
-            logger.trace("Sending user to search task with document " + JSON.stringify(doc));
-            Router.go("Search", {userID: userID,
-                                    docID: doc._id});    
+            Router.go("SearchInstructions", {userID: userID});    
         }
         // Router.go("Tutorial", {userID: userID});
         // if (Meteor.user()) {

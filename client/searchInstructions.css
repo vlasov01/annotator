@@ -1,0 +1,10 @@
+.search-instructions-container {
+    max-width: 750px;
+    margin:auto;
+}
+
+.search-instructions-btn {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

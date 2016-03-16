@@ -1,0 +1,44 @@
+<template name="SearchInstructions">
+    <div class="container search-instructions-container">
+        <div class="row">
+            <div class="inst-start">
+                <p>We need you to help us find a good <b>analogy</b> for a target product description. Two products are analogous if they both <b>solve a closely related problem</b> and/or the same/different problem using <b>similar key mechanisms.</b></p>
+                <p>As an example, consider the following two product descriptions.</p>
+                <div class="container">
+                    <div class="col-md-4 col-xs-4 doc" style="margin-right:10px;">
+                        Glide is designed to keep a chef's fingers safe from slicing, along with the stench of garlic or onion. The device clips discreetly onto your knife, moving effortlessly up and down the blade to clean it without the need for napkins or fingers.
+                    </div>
+                    <div class="col-md-4 col-xs-4 doc">
+                        Broom Groomer is a step-on dustpan with added functionality that makes sweeping easier. Rubber "teeth" on the back of the dustpan let you quickly and easily comb out dust bunnies from your broom's bristles.
+                    </div>
+                </div>
+                <p>These two products are analogous because they both <b>SEPARATE</b> objects <span>(chopped food, dust bunnies, )</span> from a host object <span>(knife, broom bristles)</span> by <b>CAUSING</b> the host object to <b>PASS THROUGH</b> another object <span>(clip, rubber teeth)</span></p>
+                <div class="search-instructions-btn"><button class="btn btn-primary search-instructions-next-1">Continue</button></div>
+            </div>
+            <div class="inst-superficial" style="display:none;">
+                <p>We are specifically <b>not</b> looking for matches to a product based on <u>superficial similarity</u>, but do not solve similar problems or use similar key mechanisms. For example, consider the following pair of products, which are similar in that they are both "food/cooking/kitchen" products, but solve very different problems with different mechanisms.</p>
+                <div class="container">
+                    <div class="col-md-4 col-xs-4 doc" style="margin-right:10px;">
+                        Glide is designed to keep a chef's fingers safe from slicing, along with the stench of garlic or onion. The device clips discreetly onto your knife, moving effortlessly up and down the blade to clean it without the need for napkins or fingers.
+                    </div>
+                    <div class="col-md-4 col-xs-4 doc">
+                        Mocubo is a bamboo cutting board with three food prep containers. You'll be able to slice, dice and organize like a master chef, without breaking a sweat.
+                    </div>
+                </div>
+                <div class="search-instructions-btn"><button class="btn btn-primary search-instructions-next-2">Continue</button></div>
+            </div>
+        </div>
+        <div class="inst-practice" style="display:none;">
+            <p>Now let's practice! Please click on the product below that is <b>analogous</b> to the "Glide" product.</p>
+            <div class="container">
+                <div class="col-md-4 col-xs-4 doc test" style="margin-right:10px;">
+                    Cup holder: The no-spill beverage container holder has a wide non-skid rubber base that tapers up to a tubular area that can fit soda cans, coffee mugs/cups and water bottles. The tubular area holds your beverage container and the wide base acts to stabilize the container if you bump into it. Logos can be placed on the side of the tubular area. 
+                </div>
+                <div class="col-md-4 col-xs-4 doc test correct">
+                    Sliders is a set of 4 double-prong skewers that keep food securely on while grilling. The sliders on the skewers guide food off easily when you're ready to eat. These are so simple to use that everyone can just focus on the cuisine and each other!
+                </div>
+            </div>
+            <div class="search-instructions-btn"><button class="btn btn-primary search-instructions-next-finish" style="display:none;">Got it. Take me to the task!</button></div>
+        </div>
+    </div>
+</template>
