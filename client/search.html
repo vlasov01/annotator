@@ -21,8 +21,8 @@
 
 <template name="SeedDocument">
     <h3>Target document</h3>
-    <button class="btn btn-danger change-seed" style="margin-bottom:10px;">No good matches. Give me a new doc.</button>
-    <div class="col-md-12 col-xs-12 doc">
+    <button class="btn btn-danger change-seed disabled" style="margin-bottom:10px;">No good matches. Give me a new document.</button>
+    <div id="seed-doc" class="col-md-12 col-xs-12 doc">
         {{content}}
         <!-- {{#each sentences}} -->
             <!-- {{> sentence}} -->
@@ -35,13 +35,13 @@
         <h3>Search for matches</h3>
         <div class="input-group input-group-sm idea-search">
           <span class="input-group-btn">
-            <button class="btn btn-default search-apply-btn" type="buttonmargin-left:20%">
+            <button class="btn btn-default search-apply-btn disabled" type="buttonmargin-left:20%">
                 <i class="glyphicon glyphicon-search"></i>
             </button>
           </span>
-          <input type="text" id="search-query" class="form-control" placeholder="Enter keywords to search for matches...">
+          <input type="text" id="search-query" class="form-control" placeholder="Enter keywords to search for matches..." disabled>
           <span class="input-group-btn">
-            <button class="btn btn-default search-remove-btn" type="button">
+            <button class="btn btn-default search-remove-btn disabled" type="button">
                 <i class="glyphicon glyphicon-remove"></i>
             </button>
           </span>
@@ -52,21 +52,46 @@
 <template name="Selections">
     <h3>Best match</h3>
     <div class="selection-controls">
-          <textarea rows="2" class="form-control" id="matchDescription" placeholder="(Optional) Describe the key problem/mechanism shared by the selected match and target document"></textarea>
-          <button class="btn btn-success submit-match">Submit match</button>
+          <textarea rows="2" class="form-control" id="matchDescription" placeholder="Describe the key problem/mechanism shared by the selected match and target document"></textarea>
+          <button class="btn btn-success submit-match disabled">Submit match</button>
     </div>
     <div class='best-matches'>
           {{#each bestMatches}}
             {{> Document}}
           {{/each}}
+          <div class="col-md-12 col-xs-12 doc doc-match sample-best">
+              <div class="doc-header" style="margin-bottom: 5px;">
+                  <div class="btn-group" role="group">
+                      <button id="match-remove-{{_id}}" class="btn btn-secondary match-remove match-status disabled">Not match</button>
+                      <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status disabled">Possible match</button>
+                      <button id="match-best-{{_id}}" class="btn btn-primary match-best match-status disabled">Best match</button>
+                  </div>
+              </div>
+              <div class="doc-content">
+                  This is an example of a best match for the seed document.
+              </div>
           </div>
+    </div>
     <h3>{{numPossible}} possible matches</h3>
     <div class="selections">
         
         {{#each possibleMatches}}
             {{> Document}}
         {{/each}}
-        <!-- TODO: Don't display best match(es) here -->
+        
+        <div class="col-md-12 col-xs-12 doc doc-match sample-possible">
+            <div class="doc-header" style="margin-bottom: 5px;">
+                <div class="btn-group" role="group">
+                    <button id="match-remove-{{_id}}" class="btn btn-secondary match-remove match-status disabled">Not match</button>
+                    <button id="match-add-{{_id}}" class="btn btn-primary match-add match-status disabled">Possible match</button>
+                    <button id="match-best-{{_id}}" class="btn btn-secondary match-best match-status disabled">Best match</button>
+                </div>
+            </div>
+            <div class="doc-content">
+                This is an example of a possible match for the seed document.
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -120,5 +145,17 @@
                 {{> Document}}
             {{/each}}
         {{/if}}
+        <div class="col-md-12 col-xs-12 doc doc-match sample-search">
+            <div id="sample-doc-header" class="doc-header" style="margin-bottom: 5px;">
+                <div class="btn-group" role="group">
+                    <button id="match-remove-{{_id}}" class="btn btn-danger match-remove match-status disabled">Not match</button>
+                    <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status disabled">Possible match</button>
+                    <button id="match-best-{{_id}}" class="btn btn-secondary match-best match-status disabled">Best match</button>
+                </div>
+            </div>
+            <div class="doc-content">
+                This is an example of search result that is not currently a match for the seed document.
+            </div>
+        </div>
     </div>
 </template>

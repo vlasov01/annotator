@@ -57,7 +57,7 @@ if (Documents.find().count() == 0) {
 }
 
 SearchSource.defineSource('documents', function(searchText, options) {
-  var options = {sort: {isoScore: -1}, limit: 400};
+  var options = {sort: {isoScore: -1}, limit: 50};
 
   if (searchText) {
     var regExp = buildRegExp(searchText);
