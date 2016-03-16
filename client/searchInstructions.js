@@ -20,9 +20,11 @@ Template.SearchInstructions.events({
         if(e.target.classList.contains("correct")) {
             alert("Correct! They both separate objects (chopped food, food) from a host object (knife, skewer) by causing the host object to pass through another object (clip, slider)");
             $('.search-instructions-next-finish').show();
+            EventLogger.logAnalogyTest(1);
         } else {
             alert("Incorrect! While both are about food/drink, they do not solve analogous problems. The cup holder solves the problem of stability, while the Glide and Sliders products both separate objects (chopped food, food) from a host object (knife, skewer) by causing the host object to pass through another object (clip, slider)");
             $('.search-instructions-next-finish').show();
+            EventLogger.logAnalogyTest(0);
         }
     },
 
