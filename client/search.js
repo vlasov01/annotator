@@ -83,7 +83,7 @@ Template.AnalogySearcher.onRendered(function() {
         $(".sample-best").remove();
         $(".sample-possible").remove();
         $(".sample-search").remove();
-        EventLogger.logEndTutorial();
+        EventLogger.logFinishTutorial();
         EventLogger.logBeginDocument(Session.get("currentDoc")._id);
       },
     });
