@@ -110,7 +110,7 @@ Template.AnalogySearcher.onRendered(function() {
     if (walkthrough.ended()) {
         walkthrough.restart();
     }
-
+    Session.set("lastMatchSet", {'matches': [], 'ranks':[]});
 });
 
 Template.SeedDocument.helpers({
@@ -209,9 +209,18 @@ Template.SearchResults.helpers({
     matchingDocs: function() {
         var query = Session.get("searchQuery");
         var queryMatchData = getMatches();
+        // var lastMatchSet = Session.get("lastMatchSet");
         // logger.trace(JSON.stringify(queryMatches));
+        // if (!sameMatches(queryMatchData.matches, lastMatchSet.matches)) {
+        if (query != Session.get("lastQuery")) {
+            EventLogger.logNewSearch(query)    
+            // EventLogger.logUpdateSearch(query);
+        // } else {
+            
+        }
+        // }
+        Session.set("lastQuery", query);
         Session.set("lastMatchSet", queryMatchData);
-        EventLogger.logNewSearch(query)
         return queryMatchData.matches;
     },
     hasMatches: function() {
@@ -444,4 +453,16 @@ var isBestMatch = function(doc) {
     } else {
         return false;
     }
+}
+
+var sameMatches = function(set1, set2) {
+    var firstIDs = [];
+    set1.forEach(function(s) { 
+        firstIDs.push(s._id);
+    });
+    var secondIDs = [];
+    set2.forEach(function(s) { 
+        secondIDs.push(s._id);
+    });
+    return firstIDs.sort().join(',') === secondIDs.sort().join(',');
 }
