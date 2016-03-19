@@ -8,13 +8,14 @@ Logger.setLevel('Client:land', 'trace');
 Template.land.events({
     'click .continue' : function() {
         var userName = $('#userName').val();
-        if (userName == "") {
+        var docTitle = $('#docTitle').val();
+        if (userName == "" || docTitle == "") {
             logger.warn("User is not logged in");
-            alert("You need to have entered your MTurkID to continue");
+            alert("You need to have entered both your MTurkID and the docID from the HIT to continue");
         } else {
             logger.trace("User " + userName + " clicked continue");
             userID = UserManager.loginUser(userName);
-            Router.go("SearchInstructions", {userID: userID});    
+            Router.go("SearchInstructions", {userID: userID, docTitle: docTitle});    
         }
         // Router.go("Tutorial", {userID: userID});
         // if (Meteor.user()) {

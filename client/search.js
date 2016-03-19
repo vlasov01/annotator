@@ -295,6 +295,9 @@ Template.Selections.events({
 
                 // remember that this user has already seen this doc
                 DocumentManager.markAnnotatedBy(doc, user);
+
+                // clear search query (and also log implicit rejects)
+                $('.search-remove-btn').click();
                 
                 EventLogger.logFinishDocument(doc._id);
                 Router.go("Finish", {matchID: finalMatch._id});

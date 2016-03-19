@@ -30,10 +30,18 @@ Template.SearchInstructions.events({
 
     'click .search-instructions-next-finish' : function() {
         userID = Session.get("currentUser")._id;
-        var doc = DocumentManager.sampleDocument(); 
-        logger.trace("Sending user to search task with document " + JSON.stringify(doc));
-        Router.go("Search", {userID: userID,
-                                docID: doc._id});    
+        var docTitle = Session.get("currentDocTitle") + ".txt";
+        var doc = Documents.findOne({fileName: docTitle});
+        if (isInList(userID, doc.annotatedBy)) {
+            var newDoc = DocumentManager.sampleDocument(); 
+            logger.trace("Sending user to search task with document " + JSON.stringify(doc));
+            Router.go("Search", {userID: userID,
+                                    docID: newDoc._id});    
+        } else {
+            logger.trace("Sending user to search task with document " + JSON.stringify(doc));
+            Router.go("Search", {userID: userID,
+                                    docID: doc._id});    
+        }
         // EventLogger.logBeginDocument(doc._id);
     },
     'keyup input#userName': function (evt) {
