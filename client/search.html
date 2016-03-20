@@ -7,6 +7,7 @@
             <div class="col-md-4 col-xs-4">
                 <div class="row search-bar">
                     {{> SearchBar}}
+                    {{> SearchHelp}}
                 </div>
                 <div class="row results">
                     {{> SearchResults}}
@@ -32,7 +33,7 @@
 
 <template name="SearchBar">
     <div class="search-bar">
-        <h3>Search for matches</h3>
+        <h3>Search for matches <span class="search-help">(<a href="" data-toggle="modal" data-target="#searchHelp">Need help?</a>)</span></h3>
         <div class="input-group input-group-sm idea-search">
           <span class="input-group-btn">
             <button class="btn btn-default search-apply-btn disabled" type="buttonmargin-left:20%">
@@ -157,5 +158,56 @@
                 This is an example of search result that is not currently a match for the seed document.
             </div>
         </div>
+    </div>
+</template>
+
+<template name="SearchHelp">
+    <!-- Modal -->
+    <div class="modal fade" id="searchHelp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Instructions/Help</h4>
+          </div>
+          <div class="modal-body">
+            <h3>What am I looking for again?</h3>
+            <div class="inst-start">
+                <p>We need you to help us find a good <b>analogy</b> for a target product description. Two products are analogous if they both <b>solve a closely related problem</b> and/or the same/different problem using <b>similar key mechanisms.</b></p>
+                <p>As an example, consider the following two product descriptions.</p>
+                <div class="container">
+                    <div class="col-md-4 col-xs-4 doc" style="margin-right:10px;">
+                        Glide is designed to keep a chef's fingers safe from slicing, along with the stench of garlic or onion. The device clips discreetly onto your knife, moving effortlessly up and down the blade to clean it without the need for napkins or fingers.
+                    </div>
+                    <div class="col-md-4 col-xs-4 doc">
+                        Broom Groomer is a step-on dustpan with added functionality that makes sweeping easier. Rubber "teeth" on the back of the dustpan let you quickly and easily comb out dust bunnies from your broom's bristles.
+                    </div>
+                </div>
+                <p>These two products are analogous because they both <b>SEPARATE</b> objects <span>(chopped food, dust bunnies)</span> from a host object <span>(knife, broom bristles)</span> by <b>CAUSING</b> the host object to <b>PASS THROUGH</b> another object <span>(clip, rubber teeth)</span></p>
+            </div>
+            <!-- <div class="inst-superficial">
+                <p>We are specifically <b>not</b> looking for matches to a product based on <u>superficial similarity</u>, but do not solve similar problems or use similar key mechanisms. For example, consider the following pair of products, which are similar in that they are both "food/cooking/kitchen" products, but solve very different problems with different mechanisms.</p>
+                <div class="container">
+                    <div class="col-md-4 col-xs-4 doc" style="margin-right:10px;">
+                        Glide is designed to keep a chef's fingers safe from slicing, along with the stench of garlic or onion. The device clips discreetly onto your knife, moving effortlessly up and down the blade to clean it without the need for napkins or fingers.
+                    </div>
+                    <div class="col-md-4 col-xs-4 doc">
+                        Mocubo is a bamboo cutting board with three food prep containers. You'll be able to slice, dice and organize like a master chef, without breaking a sweat.
+                    </div>
+                </div>
+            </div> -->
+            <h3>How do I find good matches?</h3>
+            <p>Here are some strategies that others have found to be useful:</p>
+            <ul>
+                <li>Try to think of the most unique or core attribute of the target product.</li>
+                <li>Try to think of synonyms or related words for your keywords (e.g., "protect" >> ["defend", "shield", "fortify", "secure"].</li>
+                <li>Try to think of more general/abstract versions of your keywords (e.g., "strain" >> "extract/remove" >> "separate").</li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Got it</button>
+          </div>
+        </div>
+      </div>
     </div>
 </template>

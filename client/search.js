@@ -198,6 +198,10 @@ Template.SearchBar.events({
         $('#search-query').val("");
         $('.doc-match').unhighlight();
     },
+
+    '.click .search-help' : function() {
+        EventLogger.logHintUse();
+    },
 })
 
 Template.SearchResults.rendered = function () {
@@ -209,6 +213,7 @@ Template.SearchResults.helpers({
     matchingDocs: function() {
         var query = Session.get("searchQuery");
         var queryMatchData = getMatches();
+        Session.set("lastMatchSet", queryMatchData);
         // var lastMatchSet = Session.get("lastMatchSet");
         // logger.trace(JSON.stringify(queryMatches));
         // if (!sameMatches(queryMatchData.matches, lastMatchSet.matches)) {
@@ -220,7 +225,7 @@ Template.SearchResults.helpers({
         }
         // }
         Session.set("lastQuery", query);
-        Session.set("lastMatchSet", queryMatchData);
+        
         return queryMatchData.matches;
     },
     hasMatches: function() {
@@ -465,4 +470,8 @@ var sameMatches = function(set1, set2) {
         secondIDs.push(s._id);
     });
     return firstIDs.sort().join(',') === secondIDs.sort().join(',');
+}
+
+endTour = function() {
+    walkthrough.end();
 }

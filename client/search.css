@@ -46,6 +46,10 @@
     overflow: auto;
 }
 
+.search-container .search-help {
+    font-size:12px;
+}
+
 .search-container .search-results {
     max-height: 565px;
     overflow: auto;
