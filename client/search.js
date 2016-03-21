@@ -146,6 +146,7 @@ Template.SearchItem.helpers({
 Template.SearchItem.events({
     'click .search-query-item': function() {
         // console.log(this);
+        EventLogger.logRedoSearch(this.query, this);
         $('#search-query').val(this.query);
         $('.search-apply-btn').click();
     },
