@@ -190,7 +190,10 @@ Template.SeedDocument.events({
 Template.SearchBar.events({
     'click .search-apply-btn' : function(){
         var query = $('#search-query').val(); // grab query from text form
-        Session.set("searchQuery",query);
+        Session.set("searchQuery", query);
+        if (!Session.equals("lastQuery", query)) {
+            implicitRejections();
+        }
         DocSearch.search(query);
         $('.search-apply-btn').addClass('btn-success');
         var queryMatchData = getMatches();
@@ -211,17 +214,7 @@ Template.SearchBar.events({
 
     // clear full-text search of idea content
     'click .search-remove-btn' : function(){
-        var lastQuery = Session.get("searchQuery");
-        var matchData = Session.get("lastMatchSet");
-        logger.trace("Last match set: " + JSON.stringify(matchData));
-        var allMatches = matchData.matches;
-        var ranks = matchData.ranks;
-        allMatches.forEach(function(m) {
-            if (!(isPossibleMatch(m) || isBestMatch(m))) {
-                var thisRank = ranks[m._id];
-                EventLogger.logImplicitReject(lastQuery, m, thisRank);
-            }
-        });
+        implicitRejections();
         Session.set("searchQuery","############################");
         DocSearch.search("############################");
         $('.search-apply-btn').removeClass('btn-success');
@@ -523,6 +516,16 @@ var sameMatches = function(set1, set2) {
     return firstIDs.sort().join(',') === secondIDs.sort().join(',');
 }
 
-endTour = function() {
-    walkthrough.end();
+var implicitRejections = function() {
+    var lastQuery = Session.get("searchQuery");
+    var matchData = Session.get("lastMatchSet");
+    logger.trace("Last match set: " + JSON.stringify(matchData));
+    var allMatches = matchData.matches;
+    var ranks = matchData.ranks;
+    allMatches.forEach(function(m) {
+        if (!(isPossibleMatch(m) || isBestMatch(m))) {
+            var thisRank = ranks[m._id];
+            EventLogger.logImplicitReject(lastQuery, m, thisRank);
+        }
+    });
 }
