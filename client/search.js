@@ -111,6 +111,8 @@ Template.AnalogySearcher.onRendered(function() {
         walkthrough.restart();
     }
     Session.set("lastMatchSet", {'matches': [], 'ranks':[]});
+    Session.set("lastQuery", "");
+    Session.set("searchQuery", "");
 });
 
 Template.SeedDocument.helpers({
@@ -411,30 +413,50 @@ Template.Document.events({
 })
 
 var getMatches = function() {
-    var allMatches = DocSearch.getData({
-          transform: function(matchText, regExp) {
-            return matchText.replace(regExp, "<b>$&</b>")
-          },
-          sort: {isoScore: -1}
+    currentQuery = Session.get("searchQuery");
+    lastQuery = Session.get("lastQuery");
+    if (currentQuery != lastQuery) {
+        var allMatches = DocSearch.getData({
+              transform: function(matchText, regExp) {
+                return matchText.replace(regExp, "<b>$&</b>")
+              },
+              sort: {isoScore: -1}
+            });
+        var nonIdentityMatches = [];
+        allMatches.forEach(function(m) {
+            if ((m._id != Session.get("currentDoc")._id) && !(isPossibleMatch(m) || isBestMatch(m))) {
+                nonIdentityMatches.push(m);
+                
+            }
         });
-    var nonIdentityMatches = [];
-    allMatches.forEach(function(m) {
-        if ((m._id != Session.get("currentDoc")._id) && !(isPossibleMatch(m) || isBestMatch(m))) {
-            nonIdentityMatches.push(m);
-            
-        }
-    });
-    // shuffle and note the rank in the search list
-    nonIdentityMatches = shuffle(nonIdentityMatches);
-    var ranks = {}
-    var rank = 1;
-    nonIdentityMatches.forEach(function(match) {
-        ranks[match._id] = rank;
-        rank += 1;
-    })
+        // shuffle and note the rank in the search list
+        nonIdentityMatches = shuffle(nonIdentityMatches);
+        var ranks = {}
+        var rank = 1;
+        nonIdentityMatches.forEach(function(match) {
+            ranks[match._id] = rank;
+            rank += 1;
+        })
 
-    var data = {'matches': nonIdentityMatches, 'ranks': ranks}
-    return data;
+        var data = {'matches': nonIdentityMatches, 'ranks': ranks}
+        return data;
+    } else {
+        var originalSearch = Searches.findOne({query: currentQuery, seedDocID: Session.get("currentDoc")._id, userID: Session.get("currentUser")._id});
+        logger.trace("original search: " + JSON.stringify(originalSearch));
+        var lastMatchSet = originalSearch.matches.matches;
+        var newMatchSet = [];
+        var ranks = {};
+        var rank = 1;
+        lastMatchSet.forEach(function(m) {
+            if (!(isPossibleMatch(m) || isBestMatch(m))) {
+                newMatchSet.push(m);
+                ranks[m._id] = rank;
+                rank += 1;
+            }
+        });
+        return {'matches': newMatchSet, 'ranks': ranks};
+    }
+    
 }
 
 var getPossible = function() {
