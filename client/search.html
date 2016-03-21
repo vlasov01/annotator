@@ -29,6 +29,10 @@
             <!-- {{> sentence}} -->
         <!-- {{/each}} -->
     </div>
+    <h3>Recent search queries</h3>
+    {{#each searches}}
+        {{> SearchItem}}
+    {{/each}}
 </template>
 
 <template name="SearchBar">
@@ -210,4 +214,11 @@
         </div>
       </div>
     </div>
+</template>
+
+<template name="SearchItem">
+    <button class="btn btn-default search-query-item" type="button" id="{{_id}}">
+      {{query}} 
+      <!-- <span class="badge">{{numMatches}}</span> -->
+    </button>
 </template>

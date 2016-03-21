@@ -25,6 +25,11 @@
     /*margin-top:1px;*/
 }
 
+.search-container .search-query-item {
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
 .search-container .selection-controls {
     /*padding-left: 15px;*/
     /*padding-right: 17px;*/

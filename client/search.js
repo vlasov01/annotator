@@ -116,12 +116,39 @@ Template.AnalogySearcher.onRendered(function() {
 Template.SeedDocument.helpers({
     content: function() {
         return Documents.findOne({_id: Session.get("currentDoc")._id}).content;
-    }
+    },
     // sentences: function() {
     //     logger.debug("Getting sentences...");
     //     return Sentences.find({docID: Session.get("currentDoc")._id},
     //                             {sort: {psn: 1}});
     // }
+    searches: function() {
+        var allSearches = Searches.find({userID: Session.get("currentUser")._id, seedDocID: Session.get("currentDoc")._id},
+            {sort: {time: -1}}).fetch();
+        var uniqueSearches = [];
+        var uniqueQueries = [];
+        allSearches.forEach(function(s) {
+            if (!isInList(s.query, uniqueQueries)) {
+                uniqueSearches.push(s);
+                uniqueQueries.push(s.query);
+            }
+        });
+        return uniqueSearches;
+    }
+});
+
+Template.SearchItem.helpers({
+    numMatches: function() {
+        return this.matches.matches.length;
+    }
+});
+
+Template.SearchItem.events({
+    'click .search-query-item': function() {
+        // console.log(this);
+        $('#search-query').val(this.query);
+        $('.search-apply-btn').click();
+    },
 });
 
 Template.SeedDocument.events({
@@ -217,8 +244,9 @@ Template.SearchResults.helpers({
         // var lastMatchSet = Session.get("lastMatchSet");
         // logger.trace(JSON.stringify(queryMatches));
         // if (!sameMatches(queryMatchData.matches, lastMatchSet.matches)) {
-        if (query != Session.get("lastQuery")) {
-            EventLogger.logNewSearch(query)    
+        if (!Session.equals("lastQuery", query)) {
+            EventLogger.logNewSearch(query)  
+            SearchManager.newSearch(query, queryMatchData);  
             // EventLogger.logUpdateSearch(query);
         // } else {
             

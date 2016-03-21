@@ -24,4 +24,8 @@ Meteor.publish('docMatches', function() {
 
 Meteor.publish('events', function() {
     return Events.find();
-})
+});
+
+Meteor.publish("searches", function() {
+    return Searches.find();
+});
