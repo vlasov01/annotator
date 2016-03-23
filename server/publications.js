@@ -22,6 +22,10 @@ Meteor.publish('docMatches', function(userID, seedDocID) {
     return DocMatches.find({userID: userID, seedDocID: seedDocID});
 });
 
+Meteor.publish('singleDocMatch', function(matchID) {
+    return DocMatches.find({_id: matchID});
+});
+
 Meteor.publish('events', function(userID) {
     return Events.find({userID: userID});
 });
