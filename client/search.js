@@ -495,26 +495,31 @@ Template.Highlighter.events({
         for (i=0; i < m.length; i++) { 
             matchKeys.push(m[i].innerText); 
         }
-        keyWords = {'seed': seedKeys, 'match': matchKeys}
+        if (seedKeys.length === 0 || matchKeys.length === 0) {
+            alert("Please highlight key words in each document that explain how they are related.")
+            $('.highlightDocButton').click();
+        } else {
+            keyWords = {'seed': seedKeys, 'match': matchKeys}
 
-        DocMatches.update({_id: bestMatch._id},
-            {$set: {allText: docTexts,
-                    keyWords: keyWords}});
-        // log the final submission
-        finalMatch = DocMatches.findOne({_id: bestMatch._id});
-        logger.trace("Best match" + JSON.stringify(finalMatch));
-        EventLogger.logMatchSubmission(finalMatch, finalMatch.summary, keyWords);
+            DocMatches.update({_id: bestMatch._id},
+                {$set: {allText: docTexts,
+                        keyWords: keyWords}});
+            // log the final submission
+            finalMatch = DocMatches.findOne({_id: bestMatch._id});
+            logger.trace("Best match" + JSON.stringify(finalMatch));
+            EventLogger.logMatchSubmission(finalMatch, finalMatch.summary, keyWords);
 
-        // remember that this user has already seen this doc
-        var user = Session.get("currentUser");
-        var doc = Session.get("currentDoc");
-        DocumentManager.markAnnotatedBy(doc, user);
+            // remember that this user has already seen this doc
+            var user = Session.get("currentUser");
+            var doc = Session.get("currentDoc");
+            DocumentManager.markAnnotatedBy(doc, user);
 
-        // clear search query (and also log implicit rejects)
-        $('.search-remove-btn').click();
-        
-        EventLogger.logFinishDocument(doc._id);
-        Router.go("Finish", {matchID: finalMatch._id});
+            // clear search query (and also log implicit rejects)
+            $('.search-remove-btn').click();
+            
+            EventLogger.logFinishDocument(doc._id);
+            Router.go("Finish", {matchID: finalMatch._id});
+        }
     }
 });
 
