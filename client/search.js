@@ -139,6 +139,27 @@ Template.SeedDocument.helpers({
     }
 });
 
+Template.SeedDocument.events({
+    'click .seed-clickable': function(e){
+         s = window.getSelection();
+         var range = s.getRangeAt(0);
+         console.log(range);
+         var node = s.anchorNode;
+         console.log(node);
+        //  while(range.toString().indexOf(' ') != 0) {                 
+        //     range.setStart(node,(range.startOffset -1));
+        //  }
+        //  range.setStart(node, range.startOffset +1);
+        //  do{
+        //    range.setEnd(node,range.endOffset + 1);
+
+        // }while(range.toString().indexOf(' ') == -1 && range.toString().trim() != '');
+        // var str = range.toString().trim();
+        // alert(str);
+    }
+
+});
+
 Template.SearchItem.helpers({
     numMatches: function() {
         return this.matches.matches.length;
@@ -326,19 +347,21 @@ Template.Selections.events({
                 // add metadata (completion code and summary) to best match
                 DocMatches.update({_id: bestMatch._id},{$set: {completionCode: completionCode, summary: summary}})
 
-                // log the final submission
-                finalMatch = DocMatches.findOne({_id: bestMatch._id});
-                logger.trace("Best match" + JSON.stringify(finalMatch));
-                EventLogger.logMatchSubmission(finalMatch, summary);
+                // // log the final submission
+                // finalMatch = DocMatches.findOne({_id: bestMatch._id});
+                // logger.trace("Best match" + JSON.stringify(finalMatch));
+                // EventLogger.logMatchSubmission(finalMatch, summary);
 
-                // remember that this user has already seen this doc
-                DocumentManager.markAnnotatedBy(doc, user);
+                // // remember that this user has already seen this doc
+                // DocumentManager.markAnnotatedBy(doc, user);
 
-                // clear search query (and also log implicit rejects)
-                $('.search-remove-btn').click();
+                // // clear search query (and also log implicit rejects)
+                // $('.search-remove-btn').click();
                 
-                EventLogger.logFinishDocument(doc._id);
-                Router.go("Finish", {matchID: finalMatch._id});
+                // EventLogger.logFinishDocument(doc._id);
+                // Router.go("Finish", {matchID: finalMatch._id});
+
+                $('.highlightDocButton').click();
             }
         }
     }
@@ -404,6 +427,98 @@ Template.Document.events({
         }
     }
 })
+
+Template.Highlighter.helpers({
+    seedWords: function() {
+        var seedWords = [];
+        var i = 1;
+        Session.get("currentDoc").content.split(" ").forEach(function(w) {
+            seedWords.push({'id': i, 'word': w});
+            i++;
+        });
+        return seedWords;
+    },
+    matchWords: function() {
+        var matchWords = [];
+        var i = 1;
+        var match = getBest().fetch()[0];
+        console.log(match);
+        if (match) {
+            match.content.split(" ").forEach(function(w) {
+                matchWords.push({'id': i, 'word': w});
+                i++;
+            });
+            return matchWords;
+        } else {
+            return [{'word': "No"}, {'word': "current"}, {'word': "match"}];
+        }
+    },
+    summary: function() {
+        var bestMatches = getBest().fetch();
+        var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id, 
+                                                  seedDocID: Session.get("currentDoc")._id,
+                                                  matchDocID: bestMatches[0]._id,
+                                                  bestMatch: true
+                                                  });
+        return bestMatch.summary;
+    }
+});
+
+Template.Highlighter.events({
+    'click .doc-word': function(e) {
+        // console.log(event.target);
+        logger.trace("Clicked on: " + event.target);
+        if (event.target.classList.contains("seed-word")) {
+            event.target.classList.toggle("highlight-seed");    
+        } else {
+            event.target.classList.toggle("highlight-match");    
+        }
+    },
+    'hidden.bs.modal #highlightDocs' : function() {
+        // logger.trace("Seed doc html: " + $('.highlight-seed-doc').html());
+        // logger.trace("Match doc html: " + $('.highlight-match-doc').html());
+        var bestMatches = getBest().fetch();
+        var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id, 
+                                                  seedDocID: Session.get("currentDoc")._id,
+                                                  matchDocID: bestMatches[0]._id,
+                                                  bestMatch: true
+                                                  });
+        docTexts = {'seed': $('.highlight-seed-doc').html(),
+                    'match': $('.highlight-match-doc').html()}
+        var s = $('.highlight-seed');
+        var seedKeys = [];
+        for (i=0; i<s.length; i++) { 
+            seedKeys.push(s[i].innerText); 
+        }
+        var m = $('.highlight-match');
+        var matchKeys = [];
+        for (i=0; i < m.length; i++) { 
+            matchKeys.push(m[i].innerText); 
+        }
+        keyWords = {'seed': seedKeys, 'match': matchKeys}
+
+        DocMatches.update({_id: bestMatch._id},
+            {$set: {allText: docTexts,
+                    keyWords: keyWords}});
+        // log the final submission
+        finalMatch = DocMatches.findOne({_id: bestMatch._id});
+        logger.trace("Best match" + JSON.stringify(finalMatch));
+        EventLogger.logMatchSubmission(finalMatch, finalMatch.summary, keyWords);
+
+        // remember that this user has already seen this doc
+        var user = Session.get("currentUser");
+        var doc = Session.get("currentDoc");
+        DocumentManager.markAnnotatedBy(doc, user);
+
+        // clear search query (and also log implicit rejects)
+        $('.search-remove-btn').click();
+        
+        EventLogger.logFinishDocument(doc._id);
+        Router.go("Finish", {matchID: finalMatch._id});
+    }
+});
+
+
 
 var getMatches = function() {
     currentQuery = Session.get("searchQuery");

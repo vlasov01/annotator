@@ -1,4 +1,5 @@
 <template name="AnalogySearcher">
+    <a href="" data-toggle="modal" data-target="#highlightDocs" style="display:none;" data-backdrop="static" class="highlightDocButton"></a>
     <div class="container search-container">
         <div class="row">
             <div class="col-md-4 col-xs-4 seed">
@@ -15,6 +16,7 @@
             </div>
             <div class="col-md-4 col-xs-4 selections-container">
                 {{> Selections}}
+                {{> Highlighter}}
             </div>
         </div>
     </div>
@@ -24,7 +26,7 @@
     <h3>Target document</h3>
     <button class="btn btn-danger change-seed disabled" style="margin-bottom:10px;">No good matches. Give me a new document.</button>
     <div id="seed-doc" class="col-md-12 col-xs-12 doc">
-        {{content}}
+        <p class="seed-clickable">{{content}}</p>
         <!-- {{#each sentences}} -->
             <!-- {{> sentence}} -->
         <!-- {{/each}} -->
@@ -122,7 +124,7 @@
                 </div>
             </div>
             <div class="doc-content">
-                {{content}}
+                <p class="match-clickable">{{content}}</p>
             </div>
             <!-- {{#each sentences}} -->
                 <!-- {{> sentence}} -->
@@ -221,4 +223,40 @@
       {{query}} 
       <!-- <span class="badge">{{numMatches}}</span> -->
     </button>
+</template>
+
+<template name="Highlighter">
+    <!-- Modal -->
+    <div class="modal fade" id="highlightDocs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+            <h4 class="modal-title" id="myModalLabel">Final Step: Highlight Document Keywords</h4>
+          </div>
+          <div class="modal-body">
+            <!-- <h3>What am I looking for again?</h3> -->
+            <div class="inst-start">
+                <p>Great!! Now for one final step. Please highlight the parts of each document that form the basis of the match. Do this by clicking on the key words that describe the shared problem/mechanism. As a reminder, here is your summary of how the two documents are related:</p>
+                <p><strong>{{summary}}</strong></p>            
+                <div class="container">
+                    <div class="col-md-4 col-xs-4 doc highlight-seed-doc" style="margin-right:10px;">
+                        {{#each seedWords}}
+                            <span class="doc-word seed-word">{{word}} </span>
+                        {{/each}}
+                    </div>
+                    <div class="col-md-4 col-xs-4 doc highlight-match-doc">
+                        {{#each matchWords}}
+                            <span class="doc-word match-word">{{word}} </span>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Finished</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </template>

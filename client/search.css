@@ -1,5 +1,9 @@
-.highlight {
-    background-color: #FFFF88;
+.highlight-seed {
+    background-color: rgb(194, 240, 194);
+}
+
+.highlight-match {
+    background-color: rgb(194, 240, 194);
 }
 
 .search-container .match-status {
@@ -16,6 +20,10 @@
     border-radius: 5px;
     /*box-shadow: 4px 4px 2px #F8F8F8;*/
     /*margin-top:1px;*/
+}
+
+.doc-word {
+    cursor: pointer;
 }
 
 .search-container .doc-container {
