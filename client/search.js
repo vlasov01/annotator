@@ -465,7 +465,7 @@ Template.Highlighter.helpers({
 });
 
 Template.Highlighter.events({
-    'click .doc-word': function(e) {
+    'click .doc-word': function(event) {
         // console.log(event.target);
         logger.trace("Clicked on: " + event.target);
         if (event.target.classList.contains("seed-word")) {
