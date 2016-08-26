@@ -40,35 +40,35 @@ Template.AnalogySearcher.onRendered(function() {
       {
         element: ".search-bar",
         title: "Interface walkthrough (Step 2 of 7)",
-        content: "Use this search bar to enter keywords/phrases and search for possible analogous matches in our database of 399 other product descriptions.", 
+        content: "Use this search bar to enter keywords/phrases and search for possible analogous matches in our database of 399 other product descriptions.",
         backdrop: true,
         placement: "bottom",
       },
       {
         element: ".results",
         title: "Interface walkthrough (Step 3 of 7)",
-        content: "Search results will show up here.", 
+        content: "Search results will show up here.",
         backdrop: true,
         placement: "bottom",
       },
       {
         element: "#sample-doc-header",
         title: "Interface walkthrough (Step 4 of 7)",
-        content: "You can mark a document as a possible or best match by clicking on the relevant button. By default, all documents are not matches unless you say so.", 
+        content: "You can mark a document as a possible or best match by clicking on the relevant button. By default, all documents are not matches unless you say so.",
         backdrop: true,
         placement: "bottom",
       },
       {
         element: ".selections",
         title: "Interface walkthrough (Step 5 of 7)",
-        content: "Possible matches show up here. You can promote them to best matches or remove them from your match list by clicking on either best match or not match.", 
+        content: "Possible matches show up here. You can promote them to best matches or remove them from your match list by clicking on either best match or not match.",
         backdrop: true,
         placement: "left",
       },
       {
         element: ".best-matches",
         title: "Interface walkthrough (Step 6 of 7)",
-        content: "Your currently selected best match will show up here. <b>You can only have one best match at any given time</b>. Just like before, you can demote the document to not a match or a possible match. To complete the HIT, <b>you must have one best match, and a description of how it is analogous to the seed document</b>. Once you're done, click submit, and you'll get your completion code on the next screen.", 
+        content: "Your currently selected best match will show up here. <b>You can only have one best match at any given time</b>. Just like before, you can demote the document to not a match or a possible match. To complete the HIT, <b>you must have one best match, and a description of how it is analogous to the seed document</b>. Once you're done, click submit, and you'll get your completion code on the next screen.",
         backdrop: true,
         placement: "left",
       },
@@ -116,8 +116,16 @@ Template.AnalogySearcher.onRendered(function() {
 });
 
 Template.SeedDocument.helpers({
+    title: function() {
+      var allContent = Documents.findOne({_id: Session.get("currentDoc")._id}).content.replace("I want to make a ", "");
+      var title = allContent.split(".")[0];
+      title = title.charAt(0).toUpperCase() + title.slice(1);
+      return title;
+    },
     content: function() {
-        return Documents.findOne({_id: Session.get("currentDoc")._id}).content;
+        var allContent = Documents.findOne({_id: Session.get("currentDoc")._id}).content;
+        trimmedContent = allContent.split(".").slice(1).join(". ");
+        return trimmedContent;
     },
     // sentences: function() {
     //     logger.debug("Getting sentences...");
@@ -146,7 +154,7 @@ Template.SeedDocument.events({
          console.log(range);
          var node = s.anchorNode;
          console.log(node);
-        //  while(range.toString().indexOf(' ') != 0) {                 
+        //  while(range.toString().indexOf(' ') != 0) {
         //     range.setStart(node,(range.startOffset -1));
         //  }
         //  range.setStart(node, range.startOffset +1);
@@ -203,7 +211,7 @@ Template.SeedDocument.events({
         // if (selections.length > 0) {
             // alert("Please remove all selected matches first if you want to choose another document to work on");
         // } else {
-            // 
+            //
         // }
     },
 });
@@ -262,15 +270,15 @@ Template.SearchResults.helpers({
         // logger.trace(JSON.stringify(queryMatches));
         // if (!sameMatches(queryMatchData.matches, lastMatchSet.matches)) {
         if (!Session.equals("lastQuery", query)) {
-            EventLogger.logNewSearch(query)  
-            SearchManager.newSearch(query, queryMatchData);  
+            EventLogger.logNewSearch(query)
+            SearchManager.newSearch(query, queryMatchData);
             // EventLogger.logUpdateSearch(query);
         // } else {
-            
+
         }
         // }
         Session.set("lastQuery", query);
-        
+
         return queryMatchData.matches;
     },
     hasMatches: function() {
@@ -331,7 +339,7 @@ Template.Selections.events({
             if ($("#matchDescription").val() == "") {
                 alert("Please describe how the match and seed document are analogous.");
             } else {
-                var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id, 
+                var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id,
                                                   seedDocID: Session.get("currentDoc")._id,
                                                   matchDocID: bestMatches[0]._id,
                                                   bestMatch: true
@@ -340,7 +348,7 @@ Template.Selections.events({
                 var user = Session.get("currentUser");
                 var doc = Session.get("currentDoc");
                 var summary = $("#matchDescription").val();
-                
+
                 // generate completion code
                 var completionCode = Random.hexString(20).toLowerCase();
 
@@ -357,7 +365,7 @@ Template.Selections.events({
 
                 // // clear search query (and also log implicit rejects)
                 // $('.search-remove-btn').click();
-                
+
                 // EventLogger.logFinishDocument(doc._id);
                 // Router.go("Finish", {matchID: finalMatch._id});
 
@@ -377,6 +385,15 @@ Template.Document.helpers({
     // sentences: function() {
     //     return Sentences.find({docID: this._id}, {sort: {psn: 1}});
     // },
+    theTitle: function() {
+      var title = this.content.split(".")[0].replace("I want to make a ", "");
+      title = title.charAt(0).toUpperCase() + title.slice(1)
+      return title;
+    },
+    theContent: function() {
+      trimmedContent = this.content.split(".").slice(1).join(". ");
+      return trimmedContent;
+    },
     isPossibleMatch: function() {
         return isPossibleMatch(this);
     },
@@ -423,7 +440,7 @@ Template.Document.events({
                 MatchManager.bestMatch(Session.get("currentDoc"), this);
             }
         } else {
-            MatchManager.bestMatch(Session.get("currentDoc"), this);    
+            MatchManager.bestMatch(Session.get("currentDoc"), this);
         }
     }
 })
@@ -455,7 +472,7 @@ Template.Highlighter.helpers({
     },
     summary: function() {
         var bestMatches = getBest().fetch();
-        var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id, 
+        var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id,
                                                   seedDocID: Session.get("currentDoc")._id,
                                                   matchDocID: bestMatches[0]._id,
                                                   bestMatch: true
@@ -469,16 +486,16 @@ Template.Highlighter.events({
         // console.log(event.target);
         logger.trace("Clicked on: " + event.target);
         if (event.target.classList.contains("seed-word")) {
-            event.target.classList.toggle("highlight-seed");    
+            event.target.classList.toggle("highlight-seed");
         } else {
-            event.target.classList.toggle("highlight-match");    
+            event.target.classList.toggle("highlight-match");
         }
     },
     'hidden.bs.modal #highlightDocs' : function() {
         // logger.trace("Seed doc html: " + $('.highlight-seed-doc').html());
         // logger.trace("Match doc html: " + $('.highlight-match-doc').html());
         var bestMatches = getBest().fetch();
-        var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id, 
+        var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id,
                                                   seedDocID: Session.get("currentDoc")._id,
                                                   matchDocID: bestMatches[0]._id,
                                                   bestMatch: true
@@ -487,13 +504,13 @@ Template.Highlighter.events({
                     'match': $('.highlight-match-doc').html()}
         var s = $('.highlight-seed');
         var seedKeys = [];
-        for (i=0; i<s.length; i++) { 
-            seedKeys.push(s[i].innerText); 
+        for (i=0; i<s.length; i++) {
+            seedKeys.push(s[i].innerText);
         }
         var m = $('.highlight-match');
         var matchKeys = [];
-        for (i=0; i < m.length; i++) { 
-            matchKeys.push(m[i].innerText); 
+        for (i=0; i < m.length; i++) {
+            matchKeys.push(m[i].innerText);
         }
         if (seedKeys.length === 0 || matchKeys.length === 0) {
             alert("Please highlight key words in each document that explain how they are related.")
@@ -516,7 +533,7 @@ Template.Highlighter.events({
 
             // clear search query (and also log implicit rejects)
             $('.search-remove-btn').click();
-            
+
             EventLogger.logFinishDocument(doc._id);
             Router.go("Finish", {matchID: finalMatch._id});
         }
@@ -531,7 +548,8 @@ var getMatches = function() {
     if (currentQuery != lastQuery) {
         var allMatches = DocSearch.getData({
               transform: function(matchText, regExp) {
-                return matchText.replace(regExp, "<b>$&</b>")
+                // return matchText.replace(regExp, "<b>$&</b>")
+                return matchText;
               },
               sort: {isoScore: -1}
             });
@@ -539,7 +557,7 @@ var getMatches = function() {
         allMatches.forEach(function(m) {
             if ((m._id != Session.get("currentDoc")._id) && !(isPossibleMatch(m) || isBestMatch(m))) {
                 nonIdentityMatches.push(m);
-                
+
             }
         });
         // shuffle and note the rank in the search list
@@ -550,7 +568,7 @@ var getMatches = function() {
             ranks[match._id] = rank;
             rank += 1;
         })
-
+        $('.doc-match').highlight(currentQuery.split(" "));
         var data = {'matches': nonIdentityMatches, 'ranks': ranks}
         return data;
     } else {
@@ -567,9 +585,10 @@ var getMatches = function() {
                 rank += 1;
             }
         });
+        $('.doc-match').highlight(currentQuery.split(" "));
         return {'matches': newMatchSet, 'ranks': ranks};
     }
-    
+
 }
 
 var getPossible = function() {
@@ -618,7 +637,7 @@ var isBestMatch = function(doc) {
     var user = Session.get("currentUser");
     var docMatch = DocMatches.findOne({userID: user._id, seedDocID: Session.get("currentDoc")._id, matchDocID: doc._id});
     if (docMatch) {
-        return docMatch.bestMatch;    
+        return docMatch.bestMatch;
     } else {
         return false;
     }
@@ -626,11 +645,11 @@ var isBestMatch = function(doc) {
 
 var sameMatches = function(set1, set2) {
     var firstIDs = [];
-    set1.forEach(function(s) { 
+    set1.forEach(function(s) {
         firstIDs.push(s._id);
     });
     var secondIDs = [];
-    set2.forEach(function(s) { 
+    set2.forEach(function(s) {
         secondIDs.push(s._id);
     });
     return firstIDs.sort().join(',') === secondIDs.sort().join(',');

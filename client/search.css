@@ -6,6 +6,12 @@
     background-color: rgb(194, 240, 194);
 }
 
+.highlight {
+  background-color: #ffff99;
+  font-size: 13px;
+  font-weight: bold;
+}
+
 .search-container .match-status {
     margin-left: -1px;
     margin-right: -1px;

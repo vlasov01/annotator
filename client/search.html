@@ -26,6 +26,7 @@
     <h3>Target document</h3>
     <button class="btn btn-danger change-seed disabled" style="margin-bottom:10px;">No good matches. Give me a new document.</button>
     <div id="seed-doc" class="col-md-12 col-xs-12 doc">
+        <h4>{{title}}</h4>
         <p class="seed-clickable">{{content}}</p>
         <!-- {{#each sentences}} -->
             <!-- {{> sentence}} -->
@@ -52,7 +53,7 @@
                 <i class="glyphicon glyphicon-remove"></i>
             </button>
           </span>
-        </div> 
+        </div>
     </div>
 </template>
 
@@ -81,11 +82,11 @@
     </div>
     <h3>{{numPossible}} possible matches</h3>
     <div class="selections">
-        
+
         {{#each possibleMatches}}
             {{> Document}}
         {{/each}}
-        
+
         <div class="col-md-12 col-xs-12 doc doc-match sample-possible">
             <div class="doc-header" style="margin-bottom: 5px;">
                 <div class="btn-group" role="group">
@@ -124,7 +125,8 @@
                 </div>
             </div>
             <div class="doc-content">
-                <p class="match-clickable">{{content}}</p>
+                <h4>{{theTitle}}</h4>
+                <p class="match-clickable">{{theContent}}</p>
             </div>
             <!-- {{#each sentences}} -->
                 <!-- {{> sentence}} -->
@@ -220,7 +222,7 @@
 
 <template name="SearchItem">
     <button class="btn btn-default search-query-item" type="button" id="{{_id}}">
-      {{query}} 
+      {{query}}
       <!-- <span class="badge">{{numMatches}}</span> -->
     </button>
 </template>
@@ -238,7 +240,7 @@
             <!-- <h3>What am I looking for again?</h3> -->
             <div class="inst-start">
                 <p>Great!! Now for one final step. Please highlight the parts of each document that form the basis of the match. Do this by clicking on the key words that describe the shared problem/mechanism. As a reminder, here is your summary of how the two documents are related:</p>
-                <p><strong>{{summary}}</strong></p>            
+                <p><strong>{{summary}}</strong></p>
                 <div class="container">
                     <div class="col-md-4 col-xs-4 doc highlight-seed-doc" style="margin-right:10px;">
                         {{#each seedWords}}
