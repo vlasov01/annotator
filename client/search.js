@@ -545,6 +545,7 @@ Template.Highlighter.events({
 var getMatches = function() {
     currentQuery = Session.get("searchQuery");
     lastQuery = Session.get("lastQuery");
+    $('.doc-match').unhighlight();
     if (currentQuery != lastQuery) {
         var allMatches = DocSearch.getData({
               transform: function(matchText, regExp) {
