@@ -604,7 +604,7 @@ var getMatches = function() {
         return data;
     } else {
         var originalSearch = Searches.findOne({query: currentQuery, seedDocID: Session.get("currentDoc")._id, userID: Session.get("currentUser")._id});
-        logger.trace("original search: " + JSON.stringify(originalSearch));
+        // logger.trace("original search: " + JSON.stringify(originalSearch));
         var lastMatchSet = originalSearch.matches.matches;
         var newMatchSet = [];
         var ranks = {};
