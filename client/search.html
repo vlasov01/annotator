@@ -149,10 +149,15 @@
         <h3>No results!</h3>
     {{/if}}
     <div class="search-results">
-        {{#if hasMatches}}
-            {{#each matchingDocs}}
-                {{> Document}}
-            {{/each}}
+        <!-- <img class="loading" src="/Preloader_4.gif"> -->
+        {{#if isLoading}}
+          <img class="loading" src="/Preloader_4.gif">
+        {{else}}
+          {{#if hasMatches}}
+              {{#each matchingDocs}}
+                  {{> Document}}
+              {{/each}}
+          {{/if}}
         {{/if}}
         <div class="col-md-12 col-xs-12 doc doc-match sample-search">
             <div id="sample-doc-header" class="doc-header" style="margin-bottom: 5px;">

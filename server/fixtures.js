@@ -34,7 +34,7 @@ if (Documents.find().count() == 0) {
   //   console.log("Creating document " + i);
   //   DocumentManager.createDocument(quirkyDocs[i]);
   // }
-  
+
   // var desiredNum = 5;
   // // var desiredNum = quirkyDocs.length;
   // logger.debug("Documents empty, inserting first " + desiredNum + " docs from Quirky data");
@@ -56,6 +56,11 @@ if (Documents.find().count() == 0) {
   // Words._ensureIndex({sentenceID: 1});
 
 }
+
+quirkyDocs.forEach(function(doc) {
+  console.log(doc.title);
+  DocumentManager.updateDocument(doc);
+})
 
 SearchSource.defineSource('documents', function(searchText, options) {
   var options = {sort: {isoScore: -1}, limit: 50};

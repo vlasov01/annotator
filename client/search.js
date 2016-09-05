@@ -6,12 +6,13 @@ Logger.setLevel('Client:search', 'trace');
 // Logger.setLevel('Client:search', 'warn');
 
 var resultLength = 0;
-var options = {
-    keepHistory: 1000 * 60 * 5,
-    localSearch: true
-};
-var fields = ['content'];
-DocSearch = new SearchSource('documents', fields, options);
+var dummyQuery = "############################";
+// var options = {
+//     keepHistory: 1000 * 60 * 5,
+//     localSearch: true
+// };
+// var fields = ['content'];
+// DocSearch = new SearchSource('documents', fields, options);
 
 Template.AnalogySearcher.onRendered(function() {
     var spacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
@@ -223,8 +224,9 @@ Template.SearchBar.events({
         if (!Session.equals("lastQuery", query)) {
             implicitRejections();
         }
-        DocSearch.search(query);
+        // DocSearch.search(query);
         $('.search-apply-btn').addClass('btn-success');
+        Session.set("isLoading", true);
         var queryMatchData = getMatches();
         // logger.trace(JSON.stringify(queryMatches));
         // Session.set("lastMatchSet", queryMatchData);
@@ -244,11 +246,12 @@ Template.SearchBar.events({
     // clear full-text search of idea content
     'click .search-remove-btn' : function(){
         implicitRejections();
-        Session.set("searchQuery","############################");
-        DocSearch.search("############################");
+        Session.set("searchQuery", dummyQuery);
+        // DocSearch.search("############################");
         $('.search-apply-btn').removeClass('btn-success');
         $('#search-query').val("");
         $('.doc-match').unhighlight();
+        Session.set("isLoading", false);
     },
 
     '.click .search-help' : function() {
@@ -257,8 +260,10 @@ Template.SearchBar.events({
 })
 
 Template.SearchResults.rendered = function () {
-    DocSearch.search("############################");
+    // DocSearch.search("############################");
+    Session.set("searchQuery", dummyQuery);
     Session.set("matchingDocs", []);
+    Session.set("isLoading", false);
 };
 
 Template.SearchResults.helpers({
@@ -269,7 +274,7 @@ Template.SearchResults.helpers({
         // var lastMatchSet = Session.get("lastMatchSet");
         // logger.trace(JSON.stringify(queryMatches));
         // if (!sameMatches(queryMatchData.matches, lastMatchSet.matches)) {
-        if (!Session.equals("lastQuery", query)) {
+        if (!Session.equals("lastQuery", query) && query != dummyQuery) {
             EventLogger.logNewSearch(query)
             SearchManager.newSearch(query, queryMatchData);
             // EventLogger.logUpdateSearch(query);
@@ -303,6 +308,10 @@ Template.SearchResults.helpers({
         //       },
         //       sort: {isoScore: -1}
         //     }).length;
+    },
+    isLoading: function() {
+      return Session.get("isLoading");
+      // return true;
     }
 });
 
@@ -540,20 +549,34 @@ Template.Highlighter.events({
     }
 });
 
-
+var lemmaSearch = function(query) {
+  var terms = query.split(" ");
+  var expanded = terms;
+  terms.forEach(function(term) {
+    if (words_to_lemmas.hasOwnProperty(term)) {
+      var lemma = words_to_lemmas[term];
+      if (expanded.indexOf(lemma) < 0) {
+        expanded.push(lemma);
+      }
+    }
+  });
+  logger.trace("query terms: " + JSON.stringify(expanded));
+  return Documents.find({allwords: {$in: expanded}}).fetch();
+}
 
 var getMatches = function() {
     currentQuery = Session.get("searchQuery");
     lastQuery = Session.get("lastQuery");
     $('.doc-match').unhighlight();
     if (currentQuery != lastQuery) {
-        var allMatches = DocSearch.getData({
-              transform: function(matchText, regExp) {
-                // return matchText.replace(regExp, "<b>$&</b>")
-                return matchText;
-              },
-              sort: {isoScore: -1}
-            });
+        // var allMatches = DocSearch.getData({
+        //       transform: function(matchText, regExp) {
+        //         // return matchText.replace(regExp, "<b>$&</b>")
+        //         return matchText;
+        //       },
+        //       sort: {isoScore: -1}
+        //     });
+        var allMatches = lemmaSearch(currentQuery);
         var nonIdentityMatches = [];
         allMatches.forEach(function(m) {
             if ((m._id != Session.get("currentDoc")._id) && !(isPossibleMatch(m) || isBestMatch(m))) {
@@ -571,6 +594,7 @@ var getMatches = function() {
         })
         $('.doc-match').highlight(currentQuery.split(" "));
         var data = {'matches': nonIdentityMatches, 'ranks': ranks}
+        Session.set("isLoading", false);
         return data;
     } else {
         var originalSearch = Searches.findOne({query: currentQuery, seedDocID: Session.get("currentDoc")._id, userID: Session.get("currentUser")._id});
@@ -587,6 +611,7 @@ var getMatches = function() {
             }
         });
         $('.doc-match').highlight(currentQuery.split(" "));
+        Session.set("isLoading", false);
         return {'matches': newMatchSet, 'ranks': ranks};
     }
 
@@ -659,7 +684,7 @@ var sameMatches = function(set1, set2) {
 var implicitRejections = function() {
     var lastQuery = Session.get("searchQuery");
     var matchData = Session.get("lastMatchSet");
-    logger.trace("Last match set: " + JSON.stringify(matchData));
+    // logger.trace("Last match set: " + JSON.stringify(matchData));
     var allMatches = matchData.matches;
     var ranks = matchData.ranks;
     allMatches.forEach(function(m) {
