@@ -551,8 +551,14 @@ Template.Highlighter.events({
 
 var lemmaSearch = function(query) {
   var terms = query.split(" ");
-  var expanded = terms;
+  var clean_terms = [];
   terms.forEach(function(term) {
+    if (stopwords.indexOf(term) < 0) {
+      clean_terms.push(term);
+    }
+  })
+  var expanded = clean_terms;
+  clean_terms.forEach(function(term) {
     if (words_to_lemmas.hasOwnProperty(term)) {
       var lemma = words_to_lemmas[term];
       if (expanded.indexOf(lemma) < 0) {
