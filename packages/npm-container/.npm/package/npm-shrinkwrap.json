@@ -13,7 +13,7 @@
               "version": "0.0.11",
               "dependencies": {
                 "arguments-extended": {
-                  "version": "0.0.3"
+                  "version": "http://registry.npmjs.org/arguments-extended/-/arguments-extended-0.0.3.tgz"
                 }
               }
             }
@@ -42,7 +42,7 @@
               "version": "0.0.11",
               "dependencies": {
                 "arguments-extended": {
-                  "version": "0.0.3"
+                  "version": "http://registry.npmjs.org/arguments-extended/-/arguments-extended-0.0.3.tgz"
                 }
               }
             }

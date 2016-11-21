@@ -26,6 +26,12 @@
         <p>Click on the "I'm finished" button below when you are done.</p>
     </div>
     <div class="divider">
+      <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default purpose init-highlight">Highlight purpose</button>
+        <button type="button" class="btn btn-default mechanism init-highlight">Highlight mechanism</button>
+        <button type="button" class="btn btn-default unmark init-highlight">Remove highlights</button>
+        <button type="button" class="btn btn-default none init-highlight">Stop highlighting</button>
+      </div>
     </div>
     <div class="row doc-data">
         <div class="col-md-6 col-xs-6 doc">
@@ -61,27 +67,27 @@
     <!-- Single button -->
     <div class="btn-group token-container">
       {{#if isPurpose}}
-        <button type="button" class="dropdown-toggle token key-purpose" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{content}} 
+        <button type="button" class="dropdown-toggles token key-purpose" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{content}}
         </button>
       {{/if}}
-        
+
       {{#if isMech}}
         <button type="button" class="dropdown-toggle token key-mechanism" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{content}} 
+          {{content}}
         </button>
       {{/if}}
 
       {{#if isNeutral}}
-        <button type="button" class="dropdown-toggle token key-neutral" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{content}} 
+        <button type="button" class="dropdown-toggles token key-neutral" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{content}}
         </button>
       {{/if}}
 
-      <ul class="dropdown-menu">
+      <!-- <ul class="dropdown-menu">
         <li class="key-option purp"><a href="#">Problem</a></li>
         <li class="key-option mech"><a href="#">Mechanism</a></li>
         <li class="key-option"><a href="#">Unmark</a></li>
-      </ul>
+      </ul> -->
     </div>
 </template>
