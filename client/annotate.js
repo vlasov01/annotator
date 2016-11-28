@@ -5,6 +5,11 @@ Logger.setLevel('Client:annotate', 'trace');
 // Logger.setLevel('Client:annotate', 'info');
 // Logger.setLevel('Client:annotate', 'warn');
 
+// var currentStart = {'s': 0, 'w': 0};
+var currentStart = 0;
+// var currentEnd = {'s': 0, 'w': 0};
+var currentEnd = 0;
+
 Template.annotationPage.rendered = function(){
     Session.set("highlightState", "none");
 }
@@ -151,6 +156,8 @@ Template.word.events({
           var word = event.currentTarget;
           logger.trace(word.innerHTML);
           var wordID = trimFromString(word.id, "word-");
+          // currentStart.s = Sentences.findOne(Words.findOne(wordID).sentenceID).psn;
+          currentStart = Words.findOne(wordID).globalPsn;
           markWord(wordID);
       }
     },
@@ -165,9 +172,54 @@ Template.word.events({
       if (Session.get("isHighlighting")) {
         var word = event.currentTarget;
         logger.trace(word.innerHTML);
-
         var wordID = trimFromString(word.id, "word-");
-        markWord(wordID);
+        // currentEnd.s = Sentences.findOne(Words.findOne(wordID).sentenceID).psn;
+        // currentEnd.w = Words.findOne(wordID).sequence;
+        currentEnd = Words.findOne(wordID).globalPsn;
+        logger.trace("Current start: " + currentStart);
+        logger.trace("Current end: " + currentEnd);
+
+        var selectedWords = Words.find({docID: Session.get("currentDoc")._id,
+                                        globalPsn: {$gte: currentStart,
+                                                    $lte: currentEnd}
+                                        }).fetch();
+        logger.trace("Selected words: " + selectedWords);
+        // mark all of these words
+        selectedWords.forEach(function(w) {
+          markWord(w._id);
+        });
+
+        // // get all sentences included in the highlight
+        // var selectedSentences = Sentences.find({psn: {$gte: currentStart.s, $lte: currentEnd.s}}).fetch();
+        // logger.trace("Selected sentences: " + JSON.stringify(selectedSentences));
+        // for (i=0; i<selectedSentences.length; i++) {
+        //   var thisSentence = selectedSentences[i];
+        //   logger.trace("This sentence: " + JSON.stringify(thisSentence));
+        //   var theseWords = Words.find({sentenceID: thisSentence._id}).fetch();
+        //   logger.trace("These words: " + JSON.stringify(theseWords));
+        //   // first sentence in range
+        //   if (i==0) {
+        //     theseWords.forEach(function(w) {
+        //       if (w.sequence >= currentStart.w) {
+        //         markWord(w._id);
+        //       }
+        //     });
+        //     // last sentence in range
+        //   } else if (i+1 == selectedSentences.length) {
+        //     theseWords.forEach(function(w) {
+        //       if (w.sequence <= currentEnd.w) {
+        //         markWord(w._id);
+        //       }
+        //     });
+        //     // everything else we just dump in as a highlight
+        //   } else {
+        //     theseWords.forEach(function(w) {
+        //       markWord(w._id);
+        //     });
+        //   }
+        // }
+
+        // markWord(wordID);
       }
     },
 
@@ -201,4 +253,8 @@ markWord = function(wordID) {
   } else {
       WordManager.markWord(wordID, userID, "Neither");
   }
+}
+
+unMarkWord = function(wordID) {
+  WordManager.markWord(wordID, userID, "Neither");
 }
