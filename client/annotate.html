@@ -65,29 +65,24 @@
 
 <template name="word">
     <!-- Single button -->
-    <div class="btn-group token-container">
+    <!-- <div class="btn-group token-container"> -->
       {{#if isPurpose}}
-        <button type="button" class="dropdown-toggles token key-purpose" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="token key-purpose" id="word-{{_id}}">
           {{content}}
-        </button>
+        </span>
       {{/if}}
 
       {{#if isMech}}
-        <button type="button" class="dropdown-toggle token key-mechanism" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="token key-mechanism" id="word-{{_id}}">
           {{content}}
-        </button>
+        </span>
       {{/if}}
 
       {{#if isNeutral}}
-        <button type="button" class="dropdown-toggles token key-neutral" id="word-{{_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="token key-neutral" id="word-{{_id}}">
           {{content}}
-        </button>
+        </span>
       {{/if}}
 
-      <!-- <ul class="dropdown-menu">
-        <li class="key-option purp"><a href="#">Problem</a></li>
-        <li class="key-option mech"><a href="#">Mechanism</a></li>
-        <li class="key-option"><a href="#">Unmark</a></li>
-      </ul> -->
-    </div>
+    <!-- </div> -->
 </template>
