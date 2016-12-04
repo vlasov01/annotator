@@ -100,6 +100,12 @@ Template.annotateTask.events({
             Router.go("Finish");
         }
         // Router.go("Finish");
+    },
+
+    'mouseup': function() {
+      if (Session.equals("isHighlighting", true)) {
+        Session.set("isHighlighting", false);
+      }
     }
 })
 
