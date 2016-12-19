@@ -1,0 +1,26 @@
+{
+  "name": "annotator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "findAnalogy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vlasov01/annotator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vlasov01/annotator/issues"
+  },
+  "homepage": "https://github.com/vlasov01/annotator#readme",
+  "dependencies": {
+    "babel-runtime": "^6.20.0",
+    "fast-csv": "^2.3.0",
+    "jszip": "^3.1.3",
+    "spin.js": "^2.3.2",
+    "xmlbuilder": "^8.2.2"
+  }
+}
