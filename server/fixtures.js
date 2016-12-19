@@ -4,7 +4,7 @@ Logger.setLevel('Server:fixtures', 'trace');
 // Logger.setLevel('Server:fixtures', 'debug');
 // Logger.setLevel('Server:fixtures', 'info');
 // Logger.setLevel('Server:fixtures', 'warn');
-
+/*
 if (Posts.find().count() === 0) {
   Posts.insert({
     title: 'Introducing Telescope',
@@ -21,7 +21,7 @@ if (Posts.find().count() === 0) {
     url: 'http://themeteorbook.com'
   });
 }
-
+*/
 if (Documents.find().count() == 0) {
   // var doc = new Document("Dummy");
   // var docID = Documents.insert(doc);

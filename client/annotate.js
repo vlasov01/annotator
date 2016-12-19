@@ -25,11 +25,30 @@ Template.annotationPage.helpers({
     }
 });
 
+Template.annotateTask.onCreated( () => {
+	let template = Template.instance();
+	template.sentences  = new ReactiveVar();
+	template.words  = new ReactiveVar();
+	logger.debug("Getting sentences...");
+	Meteor.call( 'getSentences', Session.get("currentDoc")._id, ( error, response ) => {
+		if ( error ) {
+			logger.debug("Failed server call for Sentences:" + error.reason );
+		} else {
+			template.sentences.set( response );
+		}
+	});
+});
+
 Template.annotateTask.helpers({
     sentences: function() {
-        logger.debug("Getting sentences...");
-        return Sentences.find({docID: Session.get("currentDoc")._id},
-                                {sort: {psn: 1}});
+		return Template.instance().sentences.get();
+	}
+});
+
+Template.annotateTask.helpers({
+    title: function() {
+        logger.debug("Getting title...");
+        return Session.get("currentDoc").title;
     }
 });
 
@@ -109,12 +128,55 @@ Template.annotateTask.events({
     }
 })
 
+
+Template.sentence.onCreated( () => {
+	let template = Template.instance();
+	template.words  = new ReactiveVar();
+	logger.debug("Getting sentences...");
+	Meteor.call( 'getWords', Session.get("currentDoc")._id, ( error, response ) => {
+		if ( error ) {
+			logger.debug("Failed server call for Words:" + error.reason );
+		} else {
+			template.words.set( response );
+		}
+	});
+});
+
 Template.sentence.helpers({
     words: function() {
+		logger.debug("Getting words..."+Template.instance().words.get());
+		let result = new Array();
+		if (Template.instance().words.get() === "undefined") {
+			logger.debug("Loading words...");
+		} else {
+			let key = this._id;
+			logger.debug("Words for Sentence ID..."+key);
+			
+			Template.instance().words.get().forEach(function(w) {
+			  //logger.debug("wordID......."+w._id);
+			  //logger.debug("wordID......."+w.content);
+			  //logger.debug("sentenceID..."+w.sentenceID);
+			  if (w.sentenceID == key) {
+				result.push(w);
+			  }
+			});
+		}
+		//return Template.instance().words.get();
+		return result;
+	}
+	/*
+    words: function() {
         logger.debug("Getting words...");
-        return Words.find({sentenceID: this._id},
+        let words = Words.find({sentenceID: this._id},
                             {sort: { sequence : 1 }});
+		return words;
     }
+	*/
+});
+
+Template.word.onCreated( () => {
+  let template = Template.instance();
+  template.subscribe( 'words' );
 });
 
 Template.word.helpers({

@@ -34,13 +34,35 @@
       </div>
     </div>
     <div class="row doc-data">
-        <div class="col-md-6 col-xs-6 doc">
+		<div class="col-md-6 col-xs-6 doc">
+			<h3>
+				{{title}}
+			</h3>
+			<ul>
             {{#each sentences}}
+				<li>
                 {{> sentence}}
+				</li>
             {{/each}}
+			</ul>
         </div>
         <div class="col-md-6 col-xs-6 summary">
-            <label>What is the unique <span class="key-purpose">problem</span> that this product solves?</label>
+
+			<label> Is this product a "combination product"?</label><br/>
+			<input type="radio" name="combo" value="yes"> <b> YES</b> Product is clearly a combination of different <span class="key-mechanism">mechanisms</span><br>
+			<input type="radio" name="combo" value="yes"> <b>NO</b> Product is not a combination<br>
+			<br/>
+
+			<u>Examples for combination products</u>:
+			<ul>
+			<li> An <span class="key-mechanism">alarm clock</span> with <span class="key-mechanism">wheels</span> to help you wake up! </li>
+			<li> A <span class="key-mechanism">pillow</span> with <span class="key-mechanism">sensors</span> to track sleep patterns </li>
+			</ul>
+			<br/>
+			<img src="/combo_clock.jpg" width="256" height="170" align ="middle">
+			<br/>
+
+			<label>What is the unique <span class="key-purpose">problem</span> that this product solves?</label>
             <textarea class="form-control" id="summ-purp" rows="3" placeholder="This product solves the main problem of how to..."></textarea>
             <br/>
             <label>What is/are the <span class="key-mechanism">mechanism(s)</span> the product uses to solve its main problem?</label>
