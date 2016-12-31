@@ -76,7 +76,13 @@ Template.annotateTask.events({
         Session.set("currentDoc", doc);
     },
     'click .finished': function() {
-        // grab and check summary data
+        var combination = $('input:radio[name="combination"]:checked').val();
+		if (combination === undefined) {
+			var hasCombinationSelection = false;
+		} else {
+			var hasCombinationSelection = true;
+		}
+    	// grab and check summary data
         var sumPurpose = $('#summ-purp').val();
         var sumMechanism = $('#summ-mech').val();
         logger.trace("Purpose summary: " + sumPurpose);
@@ -95,13 +101,23 @@ Template.annotateTask.events({
         }
 
         // only continue if we have all the data!
-        if (!hasSummary && !hasAnnotations) {
+		if (!hasCombinationSelection && !hasAnnotations) {
+		    alert("Please make selection on combination product and annotate the document! Remember: we would like at least one purpose keyword and one mechanism keyword.");
+		} else if (!hasCombinationSelection && hasAnnotations) {
+		    alert("Please make selection on combination product!");
+		} else if (hasCombinationSelection && !hasAnnotations) {
+		    alert("Please annotate the document! Remember: we would like at least one purpose keyword and one mechanism keyword.");
+		}
+		/*
+		else if (!hasSummary && !hasAnnotations) {
             alert("Please summarize and annotate the document! Remember: we would like at least one purpose keyword and one mechanism keyword.");
         } else if (!hasSummary && hasAnnotations) {
             alert("Please summarize the document!");
         } else if (hasSummary && !hasAnnotations) {
             alert("Please annotate the document! Remember: we would like at least one purpose keyword and one mechanism keyword.");
-        } else {
+        } 
+		*/
+		else {
             // grab the summary data and push to finish
             var user = Session.get("currentUser");
             var doc = Session.get("currentDoc");
@@ -112,6 +128,10 @@ Template.annotateTask.events({
             DocumentManager.addSummary(doc,
                                         "Mechanism",
                                         sumMechanism,
+                                        user);
+            DocumentManager.addSummary(doc,
+                                        "Combination",
+                                        combination,
                                         user);
             DocumentManager.markAnnotatedBy(doc,
                                           user);
@@ -144,19 +164,17 @@ Template.sentence.onCreated( () => {
 
 Template.sentence.helpers({
     words: function() {
-		logger.debug("Getting words..."+Template.instance().words.get());
 		let result = new Array();
-		if (Template.instance().words.get() === "undefined") {
+		if (Template.instance().words.get() === undefined) {
 			logger.debug("Loading words...");
 		} else {
 			let key = this._id;
 			logger.debug("Words for Sentence ID..."+key);
-			
+			Session.set("words", Template.instance().words.get());
 			Template.instance().words.get().forEach(function(w) {
-			  //logger.debug("wordID......."+w._id);
-			  //logger.debug("wordID......."+w.content);
-			  //logger.debug("sentenceID..."+w.sentenceID);
 			  if (w.sentenceID == key) {
+			    w.wordDep = new Deps.Dependency();
+			    w.wordDep.depend();
 				result.push(w);
 			  }
 			});
@@ -164,19 +182,6 @@ Template.sentence.helpers({
 		//return Template.instance().words.get();
 		return result;
 	}
-	/*
-    words: function() {
-        logger.debug("Getting words...");
-        let words = Words.find({sentenceID: this._id},
-                            {sort: { sequence : 1 }});
-		return words;
-    }
-	*/
-});
-
-Template.word.onCreated( () => {
-  let template = Template.instance();
-  template.subscribe( 'words' );
 });
 
 Template.word.helpers({
@@ -217,16 +222,18 @@ Template.word.helpers({
 });
 
 Template.word.events({
-    'mousedown .token': function(event) {
+    'mousedown .token': function(event,t) {
       if (Session.get("highlightState") != "none") {
           logger.debug("Begin highlight");
           Session.set("isHighlighting", true);
           var word = event.currentTarget;
           logger.trace(word.innerHTML);
           var wordID = trimFromString(word.id, "word-");
-          // currentStart.s = Sentences.findOne(Words.findOne(wordID).sentenceID).psn;
-          currentStart = Words.findOne(wordID).globalPsn;
-          markWord(wordID);
+
+		  currentStart = this.globalPsn;
+          markOneWord(this);
+		  t.data.itemId = $(event.target).data('id');
+		  t.data.wordDep.changed();
       }
     },
 
@@ -243,7 +250,8 @@ Template.word.events({
         var wordID = trimFromString(word.id, "word-");
         // currentEnd.s = Sentences.findOne(Words.findOne(wordID).sentenceID).psn;
         // currentEnd.w = Words.findOne(wordID).sequence;
-        currentEnd = Words.findOne(wordID).globalPsn;
+        //currentEnd = Words.findOne(wordID).globalPsn;
+		currentEnd = WordManager.findOne(wordID).globalPsn;
         logger.trace("Current start: " + currentStart);
         logger.trace("Current end: " + currentEnd);
 
@@ -254,7 +262,7 @@ Template.word.events({
         logger.trace("Selected words: " + selectedWords);
         // mark all of these words
         selectedWords.forEach(function(w) {
-          markWord(w._id);
+          markOneWord(w);
         });
 
         // // get all sentences included in the highlight
@@ -291,7 +299,7 @@ Template.word.events({
       }
     },
 
-    'click .key-option': function(event) {
+    'click .key-option': function(event,t) {
         var selection = event.currentTarget;
         // var keyType = selection.innerText;
         // console.log(selection);
@@ -301,13 +309,15 @@ Template.word.events({
         var userID = Session.get("currentUser")._id;
         logger.trace(userID + " clicked on " + wordID);
         if (selection.classList.contains("purp")) {
-            WordManager.markWord(wordID, userID, "Purpose");
+            WordManager.markOneWord(word, userID, "Purpose");
         } else if (selection.classList.contains("mech")) {
-            WordManager.markWord(wordID, userID, "Mechanism");
+            WordManager.markOneWord(word, userID, "Mechanism");
         } else {
-            WordManager.markWord(wordID, userID, "Neither");
+            WordManager.markOneWord(word, userID, "Neither");
         }
-    }
+		t.data.itemId = $(event.target).data('id');
+		t.data.wordDep.changed();
+	}
 })
 
 markWord = function(wordID) {
@@ -320,6 +330,19 @@ markWord = function(wordID) {
       WordManager.markWord(wordID, userID, "Mechanism");
   } else {
       WordManager.markWord(wordID, userID, "Neither");
+  }
+}
+
+markOneWord = function(word) {
+  var userID = Session.get("currentUser")._id;
+  logger.trace(userID + " clicked on " + word._id);
+  var highlightType = Session.get("highlightState");
+  if (highlightType === "purpose") {
+      WordManager.markOneWord(word, userID, "Purpose");
+  } else if (highlightType === "mechanism") {
+      WordManager.markOneWord(word, userID, "Mechanism");
+  } else {
+      WordManager.markOneWord(word, userID, "Neither");
   }
 }
 

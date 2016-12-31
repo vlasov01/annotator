@@ -27,3 +27,7 @@ sacha:spin
 session
 meteorhacks:aggregate
 twbs:bootstrap
+spacebars
+spacebars-compiler
+reactive-dict
+random

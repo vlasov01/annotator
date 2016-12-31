@@ -34,5 +34,11 @@ Meteor.methods({
 	let words = Words.find({docID: filter},{sort: { sequence : 1 }}).fetch();
 	//logger.debug("Explain words:"+words[0].content);
 	return words;
+  },
+  getWord( filter ) {
+	//logger.debug("Words for sentence: "+filter);
+	let word = Words.findOne({_id: filter}).fetch();
+	//logger.debug("Explain words:"+words[0].content);
+	return word;
   }
 });
