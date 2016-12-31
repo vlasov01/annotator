@@ -158,6 +158,7 @@ Template.sentence.onCreated( () => {
 			logger.debug("Failed server call for Words:" + error.reason );
 		} else {
 			template.words.set( response );
+			Session.set("words", response);
 		}
 	});
 });
@@ -170,7 +171,12 @@ Template.sentence.helpers({
 		} else {
 			let key = this._id;
 			logger.debug("Words for Sentence ID..."+key);
-			Session.set("words", Template.instance().words.get());
+			//let allWords = Session.get("words");
+			//if (allWords === undefined) {
+			//	allWords = [];
+			//}
+			//Session.set("words", allWords.concat(Template.instance().words.get()));
+			//Session.set("words", Template.instance().words.get());
 			Template.instance().words.get().forEach(function(w) {
 			  if (w.sentenceID == key) {
 			    w.wordDep = new Deps.Dependency();
